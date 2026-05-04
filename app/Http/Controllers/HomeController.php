@@ -56,7 +56,11 @@ class HomeController extends Controller
 
         $menu = Menu::find($request->menu_id);
         
-        $order = Order::where('user_id', Auth::id())->where('status', 'pending')->first();
+        $order = Order::where('user_id', Auth::id())
+            ->where('status', 'pending')
+            ->where(function($q) {
+                $q->whereNull('location')->orWhere('location', 'not like', 'Kasir - %');
+            })->first();
         if (!$order) {
             $order = Order::create([
                 'user_id' => Auth::id(),
@@ -69,10 +73,15 @@ class HomeController extends Controller
         $currentQty = $existingItem ? $existingItem->quantity : 0;
 
         if ($currentQty + $request->quantity > $menu->stock) {
+            $sisaBisaDitambah = max(0, $menu->stock - $currentQty);
+            $pesanError = $currentQty > 0 
+                ? 'Stok tidak mencukupi. Di keranjang sudah ada ' . $currentQty . ' porsi. Sisa yang bisa ditambahkan: ' . $sisaBisaDitambah
+                : 'Stok tidak mencukupi. Maksimal: ' . $menu->stock;
+
             if (request()->wantsJson()) {
-                return response()->json(['success' => false, 'message' => 'Stok tidak mencukupi. Maksimal: ' . $menu->stock]);
+                return response()->json(['success' => false, 'message' => $pesanError]);
             }
-            return redirect()->back()->withErrors(['quantity' => 'Stok tidak mencukupi. Maksimal: ' . $menu->stock]);
+            return redirect()->back()->withErrors(['quantity' => $pesanError]);
         }
 
         if ($existingItem) {
@@ -90,9 +99,7 @@ class HomeController extends Controller
         $this->recalculateOrder($order);
 
         if (request()->wantsJson()) {
-            $cartCount = OrderItem::whereHas('order', function($q) {
-                $q->where('user_id', Auth::id())->where('status', 'pending');
-            })->sum('quantity');
+            $cartCount = $order->items()->sum('quantity');
             return response()->json(['success' => true, 'cartCount' => $cartCount]);
         }
 
@@ -101,7 +108,12 @@ class HomeController extends Controller
 
     public function cart()
     {
-        $order = Order::where('user_id', Auth::id())->where('status', 'pending')->with('items.menu')->first();
+        $order = Order::where('user_id', Auth::id())
+            ->where('status', 'pending')
+            ->where(function($q) {
+                $q->whereNull('location')->orWhere('location', 'not like', 'Kasir - %');
+            })
+            ->with('items.menu')->first();
         return view('cart', compact('order'));
     }
 
@@ -109,7 +121,11 @@ class HomeController extends Controller
     {
         $request->validate(['action' => 'required|in:increase,decrease']);
         $item = OrderItem::where('id', $id)->whereHas('order', function($q) {
-            $q->where('user_id', Auth::id())->where('status', 'pending');
+            $q->where('user_id', Auth::id())
+              ->where('status', 'pending')
+              ->where(function($q2) {
+                  $q2->whereNull('location')->orWhere('location', 'not like', 'Kasir - %');
+              });
         })->firstOrFail();
 
         if ($request->action == 'increase') {
@@ -134,9 +150,7 @@ class HomeController extends Controller
 
         if (request()->wantsJson()) {
             $order = Order::where('id', $item->order_id)->with('items.menu')->first();
-            $cartCount = OrderItem::whereHas('order', function($q) {
-                $q->where('user_id', Auth::id())->where('status', 'pending');
-            })->sum('quantity');
+            $cartCount = $order->items()->sum('quantity');
             return response()->json([
                 'success' => true, 
                 'cartCount' => $cartCount,
@@ -152,7 +166,11 @@ class HomeController extends Controller
     public function removeCartItem($id)
     {
         $item = OrderItem::where('id', $id)->whereHas('order', function($q) {
-            $q->where('user_id', Auth::id())->where('status', 'pending');
+            $q->where('user_id', Auth::id())
+              ->where('status', 'pending')
+              ->where(function($q2) {
+                  $q2->whereNull('location')->orWhere('location', 'not like', 'Kasir - %');
+              });
         })->firstOrFail();
         
         $order = $item->order;
@@ -161,9 +179,7 @@ class HomeController extends Controller
         $this->recalculateOrder($order);
 
         if (request()->wantsJson()) {
-            $cartCount = OrderItem::whereHas('order', function($q) {
-                $q->where('user_id', Auth::id())->where('status', 'pending');
-            })->sum('quantity');
+            $cartCount = $order->items()->sum('quantity');
             return response()->json([
                 'success' => true, 
                 'cartCount' => $cartCount,
@@ -190,7 +206,12 @@ class HomeController extends Controller
             'location' => 'required|string|max:1000'
         ]);
 
-        $order = Order::where('user_id', Auth::id())->where('status', 'pending')->with('items.menu')->first();
+        $order = Order::where('user_id', Auth::id())
+            ->where('status', 'pending')
+            ->where(function($q) {
+                $q->whereNull('location')->orWhere('location', 'not like', 'Kasir - %');
+            })
+            ->with('items.menu')->first();
         
         if (!$order || $order->items->count() == 0) {
             return request()->wantsJson() 

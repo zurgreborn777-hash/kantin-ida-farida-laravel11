@@ -20,7 +20,15 @@
         document.addEventListener('alpine:init', () => {
             Alpine.store('cart', {
                 @auth
-                count: {{ \App\Models\OrderItem::whereHas('order', function($q) { $q->where('user_id', auth()->id())->where('status', 'pending'); })->sum('quantity') }},
+                @php
+                    $activeOrder = \App\Models\Order::where('user_id', auth()->id())
+                        ->where('status', 'pending')
+                        ->where(function($q) {
+                            $q->whereNull('location')->orWhere('location', 'not like', 'Kasir - %');
+                        })->first();
+                    $cartCount = $activeOrder ? $activeOrder->items()->sum('quantity') : 0;
+                @endphp
+                count: {{ $cartCount }},
                 @else
                 count: 0,
                 @endauth

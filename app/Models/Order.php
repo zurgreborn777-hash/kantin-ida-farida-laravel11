@@ -13,7 +13,6 @@ class Order extends Model
         'user_id',
         'status',
         'total_price',
-        'earned_points',
         'location',
     ];
 

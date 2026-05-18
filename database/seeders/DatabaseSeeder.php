@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Admin user
-        User::create([
+        $admin = User::create([
             'name' => 'Admin Ibu Ida',
             'email' => 'admin@ibuida.com',
             'password' => Hash::make('password'),
@@ -24,45 +24,53 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Regular user
-        User::create([
+        $user2 = User::create([
             'name' => 'Test User',
             'email' => 'user@test.com',
             'password' => Hash::make('password'),
             'is_admin' => false,
-            'points' => 0,
         ]);
 
+        // Categories
+        $catMakanan = \App\Models\Category::create(['name' => 'Makanan']);
+        $catMinuman = \App\Models\Category::create(['name' => 'Minuman']);
+        $catSnack = \App\Models\Category::create(['name' => 'Snack']);
+
         // Sample Menus
-        Menu::create([
+        $menu1 = Menu::create([
             'name' => 'Sayur Asem',
             'description' => 'Sayur asem segar dengan jagung manis',
             'price' => 10000,
-            'points_reward' => 10,
-            'category' => 'Makanan'
+            'category' => 'Makanan',
+            'category_id' => $catMakanan->id,
+            'stock' => 50
         ]);
 
-        Menu::create([
+        $menu2 = Menu::create([
             'name' => 'Air Putih',
             'description' => 'Air mineral dingin',
             'price' => 1000,
-            'points_reward' => 1,
-            'category' => 'Minuman'
+            'category' => 'Minuman',
+            'category_id' => $catMinuman->id,
+            'stock' => 100
         ]);
 
-        Menu::create([
+        $menu3 = Menu::create([
             'name' => 'Nasi Rames Spesial',
             'description' => 'Nasi dengan lauk ayam goreng, telur, tempe, dan sambal',
             'price' => 25000,
-            'points_reward' => 25,
-            'category' => 'Makanan'
+            'category' => 'Makanan',
+            'category_id' => $catMakanan->id,
+            'stock' => 30
         ]);
         
-        Menu::create([
+        $menu4 = Menu::create([
             'name' => 'Es Teh Manis',
             'description' => 'Es teh manis segar',
             'price' => 5000,
-            'points_reward' => 5,
-            'category' => 'Minuman'
+            'category' => 'Minuman',
+            'category_id' => $catMinuman->id,
+            'stock' => 80
         ]);
     }
 }

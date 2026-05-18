@@ -13,9 +13,19 @@ class Menu extends Model
         'name',
         'description',
         'price',
-        'points_reward',
         'image_url',
         'category',
+        'category_id',
         'stock'
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
 }

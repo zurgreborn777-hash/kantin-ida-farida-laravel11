@@ -20,45 +20,42 @@
             </button>
         </div>
 
-        <div class="invoice-sheet">
-            <div class="invoice-header">
+        <div class="invoice-sheet compact-invoice">
+            <header class="invoice-header">
                 <div>
                     <p class="invoice-kicker">Invoice / Bukti Pembayaran</p>
                     <h2>Kantin Ibu Ida</h2>
-                    <p>{{ config('app.url') }}</p>
+                    <p class="invoice-url">{{ config('app.url') }}</p>
                 </div>
                 <div class="invoice-number">
                     <span>ID Pesanan</span>
                     <strong>#{{ $order->id }}</strong>
+                    <small>{{ $order->created_at->format('d M Y H:i') }}</small>
                 </div>
-            </div>
+            </header>
 
-            <div class="invoice-meta">
-                <div>
-                    <span>Tanggal & Jam</span>
-                    <strong>{{ $order->created_at->format('d M Y H:i') }}</strong>
-                </div>
-                <div>
+            <section class="invoice-info">
+                <div class="invoice-info-row">
                     <span>Nama Pelanggan</span>
                     <strong>{{ $order->user->name ?? '-' }}</strong>
                 </div>
-                <div>
+                <div class="invoice-info-row">
                     <span>Status Pesanan</span>
                     <strong>{{ ucfirst($order->status) }}</strong>
                 </div>
-                <div>
+                <div class="invoice-info-row">
                     <span>Status Pembayaran</span>
                     <strong>{{ ucfirst($paymentStatus) }}</strong>
                 </div>
-                <div>
+                <div class="invoice-info-row">
                     <span>Metode Pembayaran</span>
                     <strong>{{ $paymentMethod }}</strong>
                 </div>
-                <div>
+                <div class="invoice-info-row invoice-address">
                     <span>Alamat</span>
                     <strong>{{ $order->location ?? '-' }}</strong>
                 </div>
-            </div>
+            </section>
 
             <div class="invoice-table-wrap">
                 <table class="invoice-table">
@@ -83,7 +80,7 @@
                 </table>
             </div>
 
-            <div class="invoice-total">
+            <section class="invoice-total">
                 <div>
                     <span>Subtotal</span>
                     <strong>Rp {{ number_format($subtotal, 0, ',', '.') }}</strong>
@@ -96,7 +93,12 @@
                     <span>Total Pembayaran</span>
                     <strong>Rp {{ number_format($order->total_price, 0, ',', '.') }}</strong>
                 </div>
-            </div>
+            </section>
+
+            <footer class="invoice-footer">
+                <span>Terima kasih sudah berbelanja di Kantin Ibu Ida.</span>
+                <span>Dicetak: {{ now()->format('d M Y H:i') }}</span>
+            </footer>
         </div>
     </div>
 </section>

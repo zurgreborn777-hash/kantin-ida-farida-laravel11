@@ -968,6 +968,68 @@ tbody tr:hover {
 .action-btn.edit { background: rgba(0, 210, 211, 0.1); color: var(--accent); }
 .action-btn.delete { background: rgba(255, 51, 102, 0.1); color: var(--primary); }
 
+.dashboard-orders-card {
+    overflow: hidden;
+}
+
+.dashboard-card-head {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.dashboard-card-head h3 {
+    margin: 0.1rem 0 0;
+}
+
+.dashboard-card-head .btn {
+    padding: 0.55rem 1rem;
+}
+
+.dashboard-table {
+    box-shadow: none;
+}
+
+.dashboard-table table {
+    table-layout: fixed;
+}
+
+.dashboard-table th,
+.dashboard-table td {
+    vertical-align: middle;
+}
+
+.dashboard-table th:nth-child(1),
+.dashboard-table td:nth-child(1) {
+    width: 12%;
+}
+
+.dashboard-table th:nth-child(2),
+.dashboard-table td:nth-child(2) {
+    width: 28%;
+}
+
+.dashboard-table th:nth-child(3),
+.dashboard-table td:nth-child(3),
+.dashboard-table th:nth-child(4),
+.dashboard-table td:nth-child(4),
+.dashboard-table th:nth-child(5),
+.dashboard-table td:nth-child(5) {
+    width: 20%;
+}
+
+.dashboard-table .status-badge {
+    position: static;
+}
+
+.dashboard-empty {
+    color: var(--text-muted);
+    font-weight: 800;
+    text-align: center;
+}
+
 .compact-hero {
     min-height: auto;
     padding: 6rem 0 3rem 0;

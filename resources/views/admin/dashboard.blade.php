@@ -18,9 +18,16 @@
     </div>
 </div>
 
-<div class="card">
-    <h3>Pesanan Terbaru</h3>
-    <div class="table-container mt-1">
+<div class="card dashboard-orders-card">
+    <div class="dashboard-card-head">
+        <div>
+            <span class="eyebrow">Aktivitas Terbaru</span>
+            <h3>Pesanan Terbaru</h3>
+        </div>
+        <a href="{{ route('admin.orders') }}" class="btn btn-outline">Lihat Semua</a>
+    </div>
+
+    <div class="table-container dashboard-table mt-1">
         <table>
             <thead>
                 <tr>
@@ -32,29 +39,33 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($orders as $order)
+                @forelse($orders as $order)
                 <tr>
-                    <td>#{{ $order->id }}</td>
-                    <td>{{ $order->user->name }}</td>
-                    <td>Rp {{ number_format($order->total_price, 0, ',', '.') }}</td>
+                    <td><strong>#{{ $order->id }}</strong></td>
+                    <td>{{ $order->user->name ?? 'User dihapus' }}</td>
+                    <td><strong>Rp {{ number_format($order->total_price, 0, ',', '.') }}</strong></td>
                     <td>
                         @if($order->status == 'pending')
-                            <span class="badge" style="background:var(--surface); color:var(--text-muted);"><i class="fa-solid fa-cart-shopping"></i> Keranjang</span>
+                            <span class="status-badge status-pending"><i class="fa-solid fa-cart-shopping"></i> Keranjang</span>
                         @elseif($order->status == 'dibuat')
-                            <span class="badge" style="background:var(--accent);"><i class="fa-solid fa-box"></i> Dibuat</span>
+                            <span class="status-badge status-dibuat"><i class="fa-solid fa-box"></i> Dibuat</span>
                         @elseif($order->status == 'diantar')
-                            <span class="badge" style="background:#f39c12; color:white;"><i class="fa-solid fa-motorcycle"></i> Diantar</span>
+                            <span class="status-badge status-diantar"><i class="fa-solid fa-motorcycle"></i> Diantar</span>
                         @elseif($order->status == 'sampai')
-                            <span class="badge" style="background:#3498db; color:white;"><i class="fa-solid fa-location-dot"></i> Sampai</span>
+                            <span class="status-badge status-sampai"><i class="fa-solid fa-location-dot"></i> Sampai</span>
                         @elseif($order->status == 'selesai')
-                            <span class="badge" style="background:#2ecc71; color:white;"><i class="fa-solid fa-check-double"></i> Selesai</span>
+                            <span class="status-badge status-selesai"><i class="fa-solid fa-check-double"></i> Selesai</span>
                         @else
-                            <span class="badge" style="background:var(--surface); color:var(--text-muted);">{{ ucfirst($order->status) }}</span>
+                            <span class="status-badge status-pending">{{ ucfirst($order->status) }}</span>
                         @endif
                     </td>
                     <td>{{ $order->created_at->diffForHumans() }}</td>
                 </tr>
-                @endforeach
+                @empty
+                <tr>
+                    <td colspan="5" class="dashboard-empty">Belum ada pesanan terbaru.</td>
+                </tr>
+                @endforelse
             </tbody>
         </table>
     </div>

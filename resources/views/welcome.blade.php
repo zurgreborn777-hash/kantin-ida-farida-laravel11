@@ -4,8 +4,8 @@
 <section class="home-hero">
     <div class="home-marquee" aria-hidden="true">
         <div>
-            <span>BUKA HARI INI</span><span>NASI RAMES HANGAT</span><span>ANTAR 2 KM</span><span>DUITKU SANDBOX</span>
-            <span>BUKA HARI INI</span><span>NASI RAMES HANGAT</span><span>ANTAR 2 KM</span><span>DUITKU SANDBOX</span>
+            <span>BUKA HARI INI</span><span>NASI RAMES HANGAT</span><span>ANTAR 2 KM</span><span>MENU RUMAHAN</span>
+            <span>BUKA HARI INI</span><span>NASI RAMES HANGAT</span><span>ANTAR 2 KM</span><span>MENU RUMAHAN</span>
         </div>
     </div>
 

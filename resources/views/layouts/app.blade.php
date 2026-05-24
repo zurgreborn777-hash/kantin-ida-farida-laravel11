@@ -87,7 +87,58 @@
         @yield('content')
     </main>
 
+    <footer class="site-footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <a href="{{ route('home') }}" class="navbar-brand">
+                    <i class="fa-solid fa-bowl-rice" style="color: var(--primary)"></i>
+                    Kantin<span>IbuIda</span>
+                </a>
+                <p>
+                    Nasi rames rumahan, pembayaran aman, dan pengantaran area kantin
+                    maksimal 2 KM. Dibuat untuk makan harian yang praktis.
+                </p>
+                <div class="footer-socials" aria-label="Kontak Kantin">
+                    <span><i class="fa-solid fa-location-dot"></i></span>
+                    <span><i class="fa-solid fa-phone"></i></span>
+                    <span><i class="fa-solid fa-receipt"></i></span>
+                </div>
+            </div>
 
+            <div class="footer-panel">
+                <h4>Navigasi</h4>
+                <a href="{{ route('home') }}">Home</a>
+                <a href="{{ route('menu') }}">Menu</a>
+                @auth
+                    <a href="{{ route('orders.my') }}">Pesanan Saya</a>
+                    <a href="{{ route('cart') }}">Keranjang</a>
+                @else
+                    <a href="{{ route('login') }}">Login</a>
+                @endauth
+            </div>
+
+            <div class="footer-panel">
+                <h4>Layanan</h4>
+                <div class="footer-service">
+                    <i class="fa-solid fa-motorcycle"></i>
+                    <span>Antar sekitar kantin maksimal 2 KM.</span>
+                </div>
+                <div class="footer-service">
+                    <i class="fa-solid fa-qrcode"></i>
+                    <span>Pembayaran digital via Duitku sandbox.</span>
+                </div>
+                <div class="footer-service">
+                    <i class="fa-solid fa-file-invoice"></i>
+                    <span>Invoice tersedia setelah pesanan dibuat.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="container footer-bottom">
+            <span>&copy; {{ date('Y') }} Kantin Ibu Ida. All rights reserved.</span>
+            <span>Fresh food, simple checkout, real Railway testing.</span>
+        </div>
+    </footer>
 
 </body>
 </html>

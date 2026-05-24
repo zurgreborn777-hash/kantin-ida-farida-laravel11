@@ -303,6 +303,273 @@ p { color: var(--text-muted); margin-bottom: 1rem; }
     transform: scale(1);
 }
 
+/* Home */
+.home-hero {
+    background:
+        linear-gradient(120deg, rgba(21, 24, 61, 0.78), rgba(109, 28, 44, 0.72)),
+        url('https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?q=80&w=1800&auto=format&fit=crop') center/cover;
+    min-height: 100vh;
+    overflow: hidden;
+    padding: 8.5rem 0 4rem;
+    position: relative;
+}
+
+.home-marquee {
+    background: #ffdc37;
+    color: #111827;
+    font-size: 0.82rem;
+    font-weight: 900;
+    left: 0;
+    letter-spacing: 0;
+    overflow: hidden;
+    padding: 0.55rem 0;
+    position: absolute;
+    right: 0;
+    top: 5.6rem;
+    white-space: nowrap;
+}
+
+.home-marquee div {
+    animation: marqueeSlide 26s linear infinite;
+    display: inline-flex;
+    gap: 2rem;
+}
+
+.home-marquee span::after {
+    content: '-';
+    margin-left: 2rem;
+}
+
+@keyframes marqueeSlide {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+}
+
+.home-hero-shell {
+    align-items: center;
+    display: grid;
+    gap: 3rem;
+    grid-template-columns: minmax(0, 1fr) minmax(340px, 0.9fr);
+    min-height: calc(100vh - 12rem);
+}
+
+.home-hero-copy {
+    color: white;
+    max-width: 720px;
+}
+
+.home-chip {
+    align-items: center;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: var(--radius-full);
+    display: inline-flex;
+    gap: 0.5rem;
+    font-weight: 900;
+    margin-bottom: 1.25rem;
+    padding: 0.55rem 0.9rem;
+}
+
+.home-hero h1 {
+    color: white;
+    font-size: clamp(2.8rem, 6vw, 5.8rem);
+    line-height: 0.98;
+    margin: 0;
+    max-width: 820px;
+}
+
+.home-hero p {
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 1.08rem;
+    max-width: 610px;
+}
+
+.home-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1.75rem;
+}
+
+.home-hero .btn-outline {
+    border-color: rgba(255, 255, 255, 0.72);
+    color: white;
+}
+
+.home-hero .btn-outline:hover {
+    background: white;
+    color: var(--primary);
+}
+
+.home-stats {
+    display: grid;
+    gap: 0.85rem;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-top: 2rem;
+    max-width: 620px;
+}
+
+.home-stats div {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 16px;
+    padding: 0.9rem;
+}
+
+.home-stats strong,
+.home-stats span {
+    display: block;
+}
+
+.home-stats strong {
+    color: #ffdc37;
+    font-size: 1.15rem;
+    font-weight: 900;
+}
+
+.home-stats span {
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 0.8rem;
+    font-weight: 800;
+}
+
+.home-food-stage {
+    min-height: 560px;
+    position: relative;
+}
+
+.home-food-card {
+    border: 10px solid rgba(255, 255, 255, 0.14);
+    border-radius: 34px;
+    box-shadow: 0 34px 80px -32px rgba(0, 0, 0, 0.72);
+    height: 520px;
+    overflow: hidden;
+    position: relative;
+    transform: rotate(2deg);
+}
+
+.home-food-card img {
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.04);
+    width: 100%;
+}
+
+.home-food-label {
+    backdrop-filter: blur(12px);
+    background: rgba(17, 24, 39, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 18px;
+    bottom: 1.2rem;
+    color: white;
+    left: 1.2rem;
+    padding: 0.9rem 1rem;
+    position: absolute;
+}
+
+.home-food-label span {
+    color: #ffdc37;
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.home-food-label strong {
+    font-size: 1.15rem;
+}
+
+.home-doodle {
+    align-items: center;
+    border: 3px solid #ffdc37;
+    border-radius: 18px;
+    color: #ffdc37;
+    display: flex;
+    font-size: 1.45rem;
+    height: 62px;
+    justify-content: center;
+    position: absolute;
+    width: 62px;
+    z-index: 3;
+}
+
+.doodle-rice {
+    left: -1rem;
+    top: 4rem;
+    transform: rotate(-12deg);
+}
+
+.doodle-spoon {
+    right: -1rem;
+    top: 8rem;
+    transform: rotate(14deg);
+}
+
+.doodle-pepper {
+    bottom: 4rem;
+    right: 1.5rem;
+    transform: rotate(-10deg);
+}
+
+.home-about {
+    background: #fff;
+    padding: 4rem 0;
+}
+
+.home-about-grid {
+    align-items: stretch;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1.35fr 0.85fr;
+}
+
+.home-about-card,
+.home-about-list {
+    background: #f8faff;
+    border: 1px solid rgba(163, 174, 208, 0.24);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+}
+
+.home-about-card h2 {
+    font-size: clamp(1.8rem, 3vw, 3rem);
+    line-height: 1.05;
+    margin-bottom: 1rem;
+}
+
+.home-about-card p {
+    max-width: 720px;
+}
+
+.home-about-list {
+    display: grid;
+    gap: 0.8rem;
+}
+
+.home-about-list div {
+    align-items: center;
+    background: white;
+    border-radius: 16px;
+    display: flex;
+    gap: 0.8rem;
+    padding: 1rem;
+}
+
+.home-about-list i {
+    align-items: center;
+    background: rgba(255, 51, 102, 0.12);
+    border-radius: 12px;
+    color: var(--primary);
+    display: flex;
+    height: 40px;
+    justify-content: center;
+    width: 40px;
+}
+
+.home-about-list span {
+    font-weight: 800;
+}
+
 /* Grid Layouts */
 .grid { display: grid; gap: 2rem; }
 .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
@@ -1140,6 +1407,30 @@ tbody tr:hover {
     .hero-grid { grid-template-columns: 1fr; }
     h1 { font-size: 2.5rem; }
     .grid-cols-3, .grid-cols-4 { grid-template-columns: 1fr; }
+    .home-hero {
+        padding-top: 8rem;
+    }
+    .home-marquee {
+        top: 5.1rem;
+    }
+    .home-hero-shell,
+    .home-about-grid {
+        grid-template-columns: 1fr;
+    }
+    .home-food-stage {
+        min-height: 360px;
+    }
+    .home-food-card {
+        height: 340px;
+        transform: none;
+    }
+    .home-stats {
+        grid-template-columns: 1fr;
+    }
+    .home-doodle {
+        height: 48px;
+        width: 48px;
+    }
     .admin-sidebar { display: none; }
     .admin-content { margin-left: 0; }
     .order-card-head,

@@ -248,7 +248,7 @@ class HomeController extends Controller
         $productDetails = "Pembayaran Pesanan #" . $order->id;
         $email = Auth::user()->email ?? 'customer@example.com';
         $customerVaName = Auth::user()->name;
-        $callbackUrl = 'https://nasi-rames-v2-production.up.railway.app/callback';
+        $callbackUrl = route('payment.callback');
         $returnUrl = route('home');
         $expiryPeriod = 60; // 60 minutes
 

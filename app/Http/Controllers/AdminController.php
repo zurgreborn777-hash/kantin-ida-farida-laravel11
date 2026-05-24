@@ -176,7 +176,7 @@ class AdminController extends Controller
         $productDetails = "Pembayaran Pesanan POS #" . $order->id;
         $email = \Illuminate\Support\Facades\Auth::user()->email;
         $customerVaName = $request->customerName;
-        $callbackUrl = 'https://nasi-rames-v2-production.up.railway.app/callback';
+        $callbackUrl = route('payment.callback');
         $returnUrl = route('admin.kasir'); // Kembali ke kasir setelah bayar
         $expiryPeriod = 60; 
 

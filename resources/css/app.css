@@ -1448,7 +1448,7 @@ tbody tr:hover {
 }
 
 .invoice-number span {
-    color: #16a34a;
+    color: var(--primary);
     display: block;
     font-size: 0.72rem;
     font-weight: 800;
@@ -1457,7 +1457,7 @@ tbody tr:hover {
 
 .invoice-brand {
     align-items: center;
-    color: #2fb457;
+    color: var(--primary);
     display: inline-flex;
     font-size: 1.9rem;
     font-weight: 900;
@@ -1550,7 +1550,7 @@ tbody tr:hover {
 }
 
 .invoice-product-name {
-    color: #009e4d;
+    color: var(--primary);
     display: block;
     font-size: 0.86rem;
     font-weight: 900;
@@ -1636,9 +1636,9 @@ tbody tr:hover {
 
 .invoice-badge {
     align-self: end;
-    background: #006b48;
+    background: var(--secondary);
     border-radius: 2px;
-    color: #d8ff3f;
+    color: white;
     font-size: 0.62rem;
     font-style: italic;
     font-weight: 900;
@@ -1649,9 +1649,9 @@ tbody tr:hover {
 
 .invoice-watermark {
     align-items: center;
-    border: 8px solid rgba(22, 163, 74, 0.07);
+    border: 8px solid rgba(255, 51, 102, 0.07);
     border-radius: 18px;
-    color: rgba(22, 163, 74, 0.07);
+    color: rgba(255, 51, 102, 0.07);
     display: flex;
     gap: 1rem;
     height: 140px;

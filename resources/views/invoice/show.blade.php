@@ -5,8 +5,10 @@
 @section('content')
 @php
     $subtotal = $order->items->sum(fn ($item) => $item->price * $item->quantity);
+    $shippingFee = $order->shipping_fee ?? 0;
     $paymentStatus = $order->payment_status ?: ($order->status === 'pending' ? 'pending' : 'paid');
     $paymentMethod = $order->payment_method ?: '-';
+    $invoiceNumber = $order->merchant_order_id ?: str_pad((string) $order->id, 12, '0', STR_PAD_LEFT);
 @endphp
 
 <section class="{{ auth()->user()->is_admin ? '' : 'p-2 mb-4' }}">
@@ -21,39 +23,45 @@
         </div>
 
         <div class="invoice-sheet compact-invoice">
+            <div class="invoice-watermark">
+                <span>Rp</span>
+                <strong>{{ strtolower($paymentStatus) === 'paid' ? 'LUNAS' : strtoupper($paymentStatus) }}</strong>
+            </div>
+
             <header class="invoice-header">
-                <div>
-                    <p class="invoice-kicker">Invoice / Bukti Pembayaran</p>
-                    <h2>Kantin Ibu Ida</h2>
-                    <p class="invoice-url">{{ config('app.url') }}</p>
+                <div class="invoice-brand">
+                    <i class="fa-solid fa-bowl-rice"></i>
+                    <span>Kantin Ibu Ida</span>
                 </div>
                 <div class="invoice-number">
-                    <span>ID Pesanan</span>
-                    <strong>#{{ $order->id }}</strong>
-                    <small>{{ $order->created_at->format('d M Y H:i') }}</small>
+                    <strong>INVOICE</strong>
+                    <span>{{ $invoiceNumber }}</span>
                 </div>
             </header>
 
-            <section class="invoice-info">
-                <div class="invoice-info-row">
-                    <span>Nama Pelanggan</span>
-                    <strong>{{ $order->user->name ?? '-' }}</strong>
+            <section class="invoice-parties">
+                <div class="invoice-party">
+                    <h3>Diterbitkan Atas Nama</h3>
+                    <div class="invoice-party-row">
+                        <span>Penjual</span>
+                        <strong>Kantin Ibu Ida</strong>
+                    </div>
                 </div>
-                <div class="invoice-info-row">
-                    <span>Status Pesanan</span>
-                    <strong>{{ ucfirst($order->status) }}</strong>
-                </div>
-                <div class="invoice-info-row">
-                    <span>Status Pembayaran</span>
-                    <strong>{{ ucfirst($paymentStatus) }}</strong>
-                </div>
-                <div class="invoice-info-row">
-                    <span>Metode Pembayaran</span>
-                    <strong>{{ $paymentMethod }}</strong>
-                </div>
-                <div class="invoice-info-row invoice-address">
-                    <span>Alamat</span>
-                    <strong>{{ $order->location ?? '-' }}</strong>
+
+                <div class="invoice-party">
+                    <h3>Untuk</h3>
+                    <div class="invoice-party-row">
+                        <span>Pembeli</span>
+                        <strong>{{ $order->user->name ?? '-' }}</strong>
+                    </div>
+                    <div class="invoice-party-row">
+                        <span>Tanggal Pembelian</span>
+                        <strong>{{ $order->created_at->format('d M Y') }}</strong>
+                    </div>
+                    <div class="invoice-party-row align-start">
+                        <span>Alamat Pengiriman</span>
+                        <strong>{{ $order->location ?? '-' }}</strong>
+                    </div>
                 </div>
             </section>
 
@@ -61,16 +69,19 @@
                 <table class="invoice-table">
                     <thead>
                         <tr>
-                            <th>Item/Menu</th>
-                            <th>Qty</th>
-                            <th>Harga</th>
-                            <th>Subtotal</th>
+                            <th>Info Produk</th>
+                            <th>Jumlah</th>
+                            <th>Harga Satuan</th>
+                            <th>Total Harga</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($order->items as $item)
                         <tr>
-                            <td>{{ $item->menu->name ?? 'Menu Dihapus' }}</td>
+                            <td>
+                                <strong class="invoice-product-name">{{ $item->menu->name ?? 'Menu Dihapus' }}</strong>
+                                <small>Status pesanan: {{ ucfirst($order->status) }}</small>
+                            </td>
                             <td>{{ $item->quantity }}</td>
                             <td>Rp {{ number_format($item->price, 0, ',', '.') }}</td>
                             <td>Rp {{ number_format($item->price * $item->quantity, 0, ',', '.') }}</td>
@@ -80,23 +91,31 @@
                 </table>
             </div>
 
-            <section class="invoice-total">
-                <div>
-                    <span>Subtotal</span>
-                    <strong>Rp {{ number_format($subtotal, 0, ',', '.') }}</strong>
-                </div>
-                <div>
-                    <span>Ongkir</span>
-                    <strong>Rp {{ number_format($order->shipping_fee ?? 0, 0, ',', '.') }}</strong>
-                </div>
-                <div class="grand-total">
-                    <span>Total Pembayaran</span>
-                    <strong>Rp {{ number_format($order->total_price, 0, ',', '.') }}</strong>
+            <section class="invoice-summary">
+                <div class="invoice-badge">PLUS</div>
+
+                <div class="invoice-total">
+                    <div>
+                        <span>Subtotal Harga Barang</span>
+                        <strong>Rp {{ number_format($subtotal, 0, ',', '.') }}</strong>
+                    </div>
+                    <div>
+                        <span>Total Ongkos Kirim</span>
+                        <strong>Rp {{ number_format($shippingFee, 0, ',', '.') }}</strong>
+                    </div>
+                    <div class="grand-total">
+                        <span>Total Tagihan</span>
+                        <strong>Rp {{ number_format($order->total_price, 0, ',', '.') }}</strong>
+                    </div>
+                    <div class="invoice-payment-note">
+                        <span>Metode Pembayaran:</span>
+                        <strong>{{ $paymentMethod }}</strong>
+                    </div>
                 </div>
             </section>
 
             <footer class="invoice-footer">
-                <span>Terima kasih sudah berbelanja di Kantin Ibu Ida.</span>
+                <span>Invoice ini sah dan diproses oleh sistem Kantin Ibu Ida.</span>
                 <span>Dicetak: {{ now()->format('d M Y H:i') }}</span>
             </footer>
         </div>

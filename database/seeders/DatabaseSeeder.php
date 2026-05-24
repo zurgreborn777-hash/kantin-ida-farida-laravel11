@@ -16,61 +16,73 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Admin user
-        $admin = User::create([
-            'name' => 'Admin Ibu Ida',
-            'email' => 'admin@ibuida.com',
-            'password' => Hash::make('password'),
-            'is_admin' => true,
-        ]);
+        User::updateOrCreate(
+            ['email' => 'admin@ibuida.com'],
+            [
+                'name' => 'Admin Ibu Ida',
+                'password' => Hash::make('password'),
+                'is_admin' => true,
+            ]
+        );
 
         // Regular user
-        $user2 = User::create([
-            'name' => 'Test User',
-            'email' => 'user@test.com',
-            'password' => Hash::make('password'),
-            'is_admin' => false,
-        ]);
+        User::updateOrCreate(
+            ['email' => 'user@test.com'],
+            [
+                'name' => 'Test User',
+                'password' => Hash::make('password'),
+                'is_admin' => false,
+            ]
+        );
 
         // Categories
-        $catMakanan = \App\Models\Category::create(['name' => 'Makanan']);
-        $catMinuman = \App\Models\Category::create(['name' => 'Minuman']);
-        $catSnack = \App\Models\Category::create(['name' => 'Snack']);
+        $catMakanan = \App\Models\Category::updateOrCreate(['name' => 'Makanan']);
+        $catMinuman = \App\Models\Category::updateOrCreate(['name' => 'Minuman']);
+        \App\Models\Category::updateOrCreate(['name' => 'Snack']);
 
         // Sample Menus
-        $menu1 = Menu::create([
-            'name' => 'Sayur Asem',
-            'description' => 'Sayur asem segar dengan jagung manis',
-            'price' => 10000,
-            'category' => 'Makanan',
-            'category_id' => $catMakanan->id,
-            'stock' => 50
-        ]);
+        Menu::updateOrCreate(
+            ['name' => 'Sayur Asem'],
+            [
+                'description' => 'Sayur asem segar dengan jagung manis',
+                'price' => 10000,
+                'category' => 'Makanan',
+                'category_id' => $catMakanan->id,
+                'stock' => 50,
+            ]
+        );
 
-        $menu2 = Menu::create([
-            'name' => 'Air Putih',
-            'description' => 'Air mineral dingin',
-            'price' => 1000,
-            'category' => 'Minuman',
-            'category_id' => $catMinuman->id,
-            'stock' => 100
-        ]);
+        Menu::updateOrCreate(
+            ['name' => 'Air Putih'],
+            [
+                'description' => 'Air mineral dingin',
+                'price' => 1000,
+                'category' => 'Minuman',
+                'category_id' => $catMinuman->id,
+                'stock' => 100,
+            ]
+        );
 
-        $menu3 = Menu::create([
-            'name' => 'Nasi Rames Spesial',
-            'description' => 'Nasi dengan lauk ayam goreng, telur, tempe, dan sambal',
-            'price' => 25000,
-            'category' => 'Makanan',
-            'category_id' => $catMakanan->id,
-            'stock' => 30
-        ]);
+        Menu::updateOrCreate(
+            ['name' => 'Nasi Rames Spesial'],
+            [
+                'description' => 'Nasi dengan lauk ayam goreng, telur, tempe, dan sambal',
+                'price' => 25000,
+                'category' => 'Makanan',
+                'category_id' => $catMakanan->id,
+                'stock' => 30,
+            ]
+        );
         
-        $menu4 = Menu::create([
-            'name' => 'Es Teh Manis',
-            'description' => 'Es teh manis segar',
-            'price' => 5000,
-            'category' => 'Minuman',
-            'category_id' => $catMinuman->id,
-            'stock' => 80
-        ]);
+        Menu::updateOrCreate(
+            ['name' => 'Es Teh Manis'],
+            [
+                'description' => 'Es teh manis segar',
+                'price' => 5000,
+                'category' => 'Minuman',
+                'category_id' => $catMinuman->id,
+                'stock' => 80,
+            ]
+        );
     }
 }

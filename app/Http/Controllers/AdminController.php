@@ -139,6 +139,8 @@ class AdminController extends Controller
         $order = Order::create([
             'user_id' => \Illuminate\Support\Facades\Auth::id(),
             'status' => 'pending',
+            'payment_status' => 'pending',
+            'payment_method' => $request->paymentMethod,
             'total_price' => 0,
             'location' => 'Kasir - Pelanggan: ' . $request->customerName,
         ]);
@@ -176,8 +178,8 @@ class AdminController extends Controller
         $productDetails = "Pembayaran Pesanan POS #" . $order->id;
         $email = \Illuminate\Support\Facades\Auth::user()->email;
         $customerVaName = $request->customerName;
-        $callbackUrl = route('payment.callback');
-        $returnUrl = route('admin.kasir'); // Kembali ke kasir setelah bayar
+        $callbackUrl = config('duitku.callback_url') ?: route('payment.callback');
+        $returnUrl = config('duitku.return_url') ?: route('admin.kasir'); // Kembali ke kasir setelah bayar
         $expiryPeriod = 60; 
 
         $signature = md5($merchantCode . $merchantOrderId . $paymentAmount . $apiKey);
@@ -209,15 +211,18 @@ class AdminController extends Controller
             'paymentMethod' => $request->paymentMethod
         ];
 
-        $url = config('duitku.is_production') 
-            ? 'https://passport.duitku.com/webapi/api/merchant/v2/inquiry' 
-            : 'https://sandbox.duitku.com/webapi/api/merchant/v2/inquiry';
+        $url = config('duitku.env') === 'production'
+            ? config('duitku.production_endpoint')
+            : config('duitku.sandbox_endpoint');
 
         try {
             $response = \Illuminate\Support\Facades\Http::post($url, $params);
             $data = $response->json();
 
             if (isset($data['paymentUrl'])) {
+                $order->merchant_order_id = $merchantOrderId;
+                $order->save();
+
                 return response()->json([
                     'success' => true,
                     'payment_url' => $data['paymentUrl']

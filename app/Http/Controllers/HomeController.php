@@ -206,9 +206,24 @@ class HomeController extends Controller
             'location' => 'required|string|max:1000',
             'ongkir' => 'nullable|integer',
             'distance' => 'nullable|numeric',
-            'lat' => 'nullable|numeric',
-            'lng' => 'nullable|numeric',
+            'lat' => 'required|numeric',
+            'lng' => 'required|numeric',
         ]);
+
+        $distanceKm = $this->calculateDistanceKm(
+            config('canteen.latitude'),
+            config('canteen.longitude'),
+            (float) $request->lat,
+            (float) $request->lng
+        );
+
+        if ($distanceKm > config('canteen.max_delivery_km')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lokasi di luar jangkauan 2 KM',
+                'distance' => round($distanceKm, 2),
+            ], 422);
+        }
 
         $order = Order::where('user_id', Auth::id())
             ->where('status', 'pending')
@@ -234,8 +249,10 @@ class HomeController extends Controller
         $order->shipping_fee = $ongkir;
         $order->latitude = $request->lat;
         $order->longitude = $request->lng;
-        $order->distance_km = $request->distance;
+        $order->distance_km = round($distanceKm, 2);
         $order->total_price = $basePrice + $ongkir;
+        $order->payment_status = 'pending';
+        $order->payment_method = $request->paymentMethod ?? 'SP';
         $order->save();
 
         // Re-fetch to ensure fresh items and relations
@@ -248,8 +265,8 @@ class HomeController extends Controller
         $productDetails = "Pembayaran Pesanan #" . $order->id;
         $email = Auth::user()->email ?? 'customer@example.com';
         $customerVaName = Auth::user()->name;
-        $callbackUrl = route('payment.callback');
-        $returnUrl = route('home');
+        $callbackUrl = config('duitku.callback_url') ?: route('payment.callback');
+        $returnUrl = config('duitku.return_url') ?: route('home');
         $expiryPeriod = 60; // 60 minutes
 
         $signature = md5($merchantCode . $merchantOrderId . $paymentAmount . $apiKey);
@@ -278,18 +295,19 @@ class HomeController extends Controller
             'returnUrl' => $returnUrl,
             'signature' => $signature,
             'expiryPeriod' => $expiryPeriod,
-            'paymentMethod' => $request->paymentMethod ?? 'SP' // QRIS as default
+            'paymentMethod' => $order->payment_method // QRIS as default
         ];
 
-        $url = config('duitku.is_production') 
-            ? 'https://passport.duitku.com/webapi/api/merchant/v2/inquiry' 
-            : 'https://sandbox.duitku.com/webapi/api/merchant/v2/inquiry';
+        $url = $this->duitkuEndpoint();
 
         try {
             $response = \Illuminate\Support\Facades\Http::post($url, $params);
             $data = $response->json();
 
             if (isset($data['paymentUrl'])) {
+                $order->merchant_order_id = $merchantOrderId;
+                $order->save();
+
                 return response()->json([
                     'success' => true,
                     'payment_url' => $data['paymentUrl']
@@ -327,7 +345,14 @@ class HomeController extends Controller
                 $orderId = explode('-', $merchantOrderId)[0];
                 $order = Order::find($orderId);
                 if ($order && $order->status == 'pending') {
+                    if ($order->distance_km !== null && $order->distance_km > config('canteen.max_delivery_km')) {
+                        return response('Lokasi di luar jangkauan 2 KM', 422);
+                    }
+
                     $order->status = 'dibuat';
+                    $order->payment_status = 'paid';
+                    $order->payment_method = $paymentCode ?: $order->payment_method;
+                    $order->merchant_order_id = $merchantOrderId;
                     $order->save();
 
                     // Update stok menu
@@ -347,6 +372,17 @@ class HomeController extends Controller
     public function paymentSuccess(Request $request)
     {
         return redirect(route('home'))->with('success', 'Pembayaran berhasil! Pesanan Anda sedang diproses.');
+    }
+
+    public function invoice(Order $order)
+    {
+        if (!Auth::user()->is_admin && $order->user_id !== Auth::id()) {
+            abort(403, 'Anda tidak memiliki akses ke invoice ini.');
+        }
+
+        $order->load('user', 'items.menu');
+
+        return view('invoice.show', compact('order'));
     }
 
     public function myOrders()
@@ -379,5 +415,24 @@ class HomeController extends Controller
             return redirect()->back()->with('success', 'Pesanan telah dikonfirmasi selesai. Terima kasih!');
         }
         return redirect()->back()->withErrors(['error' => 'Pesanan tidak valid untuk dikonfirmasi.']);
+    }
+
+    private function calculateDistanceKm(float $fromLat, float $fromLng, float $toLat, float $toLng): float
+    {
+        $earthRadiusKm = 6371;
+        $latDelta = deg2rad($toLat - $fromLat);
+        $lngDelta = deg2rad($toLng - $fromLng);
+
+        $a = sin($latDelta / 2) ** 2
+            + cos(deg2rad($fromLat)) * cos(deg2rad($toLat)) * sin($lngDelta / 2) ** 2;
+
+        return $earthRadiusKm * 2 * atan2(sqrt($a), sqrt(1 - $a));
+    }
+
+    private function duitkuEndpoint(): string
+    {
+        return config('duitku.env') === 'production'
+            ? config('duitku.production_endpoint')
+            : config('duitku.sandbox_endpoint');
     }
 }

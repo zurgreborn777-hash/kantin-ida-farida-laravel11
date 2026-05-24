@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use App\Models\Menu;
+use App\Models\Order;
+use App\Models\OrderItem;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -30,6 +32,15 @@ class DatabaseSeeder extends Seeder
             ['email' => 'user@test.com'],
             [
                 'name' => 'Test User',
+                'password' => Hash::make('password'),
+                'is_admin' => false,
+            ]
+        );
+
+        $railwayTestUser = User::updateOrCreate(
+            ['email' => 'test@kantin.test'],
+            [
+                'name' => 'User Test Railway',
                 'password' => Hash::make('password'),
                 'is_admin' => false,
             ]
@@ -84,5 +95,48 @@ class DatabaseSeeder extends Seeder
                 'stock' => 80,
             ]
         );
+
+        $menusForOrder = Menu::query()->where('stock', '>', 0)->take(2)->get();
+
+        if ($menusForOrder->isNotEmpty()) {
+            $testOrder = Order::updateOrCreate(
+                [
+                    'user_id' => $railwayTestUser->id,
+                    'merchant_order_id' => 'seeded-test-order',
+                ],
+                [
+                    'status' => 'dibuat',
+                    'payment_status' => 'paid',
+                    'payment_method' => 'SANDBOX',
+                    'location' => 'Alamat testing Railway dalam radius 2 KM',
+                    'shipping_fee' => 5000,
+                    'latitude' => config('canteen.latitude'),
+                    'longitude' => config('canteen.longitude'),
+                    'distance_km' => 0,
+                    'total_price' => 0,
+                ]
+            );
+
+            $subtotal = 0;
+
+            foreach ($menusForOrder as $index => $menu) {
+                $quantity = $index + 1;
+                OrderItem::updateOrCreate(
+                    [
+                        'order_id' => $testOrder->id,
+                        'menu_id' => $menu->id,
+                    ],
+                    [
+                        'quantity' => $quantity,
+                        'price' => $menu->price,
+                    ]
+                );
+
+                $subtotal += $menu->price * $quantity;
+            }
+
+            $testOrder->total_price = $subtotal + $testOrder->shipping_fee;
+            $testOrder->save();
+        }
     }
 }

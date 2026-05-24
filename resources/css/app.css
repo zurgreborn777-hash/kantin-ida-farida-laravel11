@@ -586,10 +586,417 @@ tbody tr:hover {
 .action-btn.edit { background: rgba(0, 210, 211, 0.1); color: var(--accent); }
 .action-btn.delete { background: rgba(255, 51, 102, 0.1); color: var(--primary); }
 
+.compact-hero {
+    min-height: auto;
+    padding: 6rem 0 3rem 0;
+    background: var(--surface);
+}
+
+.notice {
+    border-radius: var(--radius-md);
+    padding: 1rem 1.25rem;
+    font-weight: 700;
+    border: 1px solid transparent;
+}
+
+.notice-success {
+    background: rgba(46, 204, 113, 0.12);
+    color: #168a48;
+    border-color: rgba(46, 204, 113, 0.35);
+}
+
+.notice-danger,
+.range-error {
+    background: rgba(255, 51, 102, 0.12);
+    color: var(--primary);
+    border-color: rgba(255, 51, 102, 0.35);
+}
+
+.range-alert {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    font-weight: 800;
+}
+
+.range-ok {
+    background: rgba(0, 210, 211, 0.12);
+    color: #008385;
+    border-color: rgba(0, 210, 211, 0.32);
+}
+
+.btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+    transform: none;
+    box-shadow: none;
+}
+
+.eyebrow {
+    color: var(--text-muted);
+    display: inline-block;
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+
+.order-list,
+.admin-order-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.order-card,
+.admin-order-card {
+    background: var(--surface);
+    border: 1px solid rgba(163, 174, 208, 0.24);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+    padding: 1.25rem;
+}
+
+.order-card-head,
+.admin-order-title,
+.invoice-header,
+.invoice-actions,
+.order-actions {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.order-card-head h3,
+.admin-order-title h4 {
+    margin: 0;
+}
+
+.status-badge {
+    align-items: center;
+    border-radius: var(--radius-full);
+    display: inline-flex;
+    gap: 0.4rem;
+    font-size: 0.78rem;
+    font-weight: 900;
+    padding: 0.45rem 0.75rem;
+    white-space: nowrap;
+}
+
+.status-pending { background: #edf2f7; color: #667085; }
+.status-dibuat { background: rgba(0, 210, 211, 0.14); color: #008385; }
+.status-diantar { background: rgba(243, 156, 18, 0.16); color: #a45f00; }
+.status-sampai { background: rgba(52, 152, 219, 0.16); color: #216b9b; }
+.status-selesai { background: rgba(46, 204, 113, 0.16); color: #168a48; }
+
+.status-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    margin: 1.25rem 0;
+    position: relative;
+}
+
+.status-steps::before {
+    background: #e7ecf7;
+    content: '';
+    height: 4px;
+    left: 8%;
+    position: absolute;
+    right: 8%;
+    top: 19px;
+    z-index: 0;
+}
+
+.status-step {
+    align-items: center;
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    font-size: 0.82rem;
+    font-weight: 800;
+    gap: 0.5rem;
+    position: relative;
+    text-align: center;
+    z-index: 1;
+}
+
+.status-dot {
+    align-items: center;
+    background: #eef2fb;
+    border: 3px solid var(--surface);
+    border-radius: var(--radius-full);
+    display: flex;
+    height: 42px;
+    justify-content: center;
+    width: 42px;
+}
+
+.status-step.active {
+    color: var(--primary);
+}
+
+.status-step.active .status-dot {
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    box-shadow: var(--shadow-colored);
+}
+
+.order-detail-grid,
+.admin-order-meta {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1.5fr 1fr;
+}
+
+.order-detail-grid h4,
+.order-detail-grid p {
+    margin: 0;
+}
+
+.order-detail-grid small {
+    color: var(--text-muted);
+    font-weight: 700;
+}
+
+.order-items,
+.admin-items {
+    background: #f8faff;
+    border-radius: var(--radius-md);
+    display: grid;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding: 1rem;
+}
+
+.order-item-row,
+.admin-items div {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.order-item-row span,
+.admin-items span,
+.admin-order-meta span {
+    color: var(--text-muted);
+    display: block;
+    font-size: 0.88rem;
+    font-weight: 700;
+}
+
+.order-item-row.muted {
+    color: var(--text-muted);
+}
+
+.order-actions {
+    border-top: 1px solid rgba(163, 174, 208, 0.24);
+    justify-content: flex-end;
+    margin-top: 1rem;
+    padding-top: 1rem;
+}
+
+.admin-page-head,
+.admin-order-card {
+    align-items: flex-start;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.admin-count {
+    background: rgba(108, 99, 255, 0.12);
+    border-radius: var(--radius-full);
+    color: var(--secondary);
+    font-weight: 900;
+    padding: 0.45rem 0.8rem;
+}
+
+.admin-order-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.admin-order-actions {
+    border-left: 1px solid rgba(163, 174, 208, 0.24);
+    display: grid;
+    gap: 1rem;
+    min-width: 220px;
+    padding-left: 1rem;
+}
+
+.admin-status-steps {
+    max-width: 680px;
+}
+
+.invoice-actions {
+    justify-content: flex-end;
+    margin-bottom: 1rem;
+}
+
+.invoice-sheet {
+    background: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+    color: #1f2937;
+    margin: 0 auto;
+    max-width: 900px;
+    padding: 2rem;
+}
+
+.invoice-kicker {
+    color: var(--primary);
+    font-weight: 900;
+    margin: 0 0 0.25rem;
+}
+
+.invoice-number {
+    background: #f8faff;
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    text-align: right;
+}
+
+.invoice-number span,
+.invoice-meta span,
+.invoice-total span {
+    color: #667085;
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 800;
+}
+
+.invoice-meta {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(3, 1fr);
+    margin: 1.5rem 0;
+}
+
+.invoice-meta div,
+.invoice-total {
+    background: #f8faff;
+    border-radius: var(--radius-md);
+    padding: 1rem;
+}
+
+.invoice-table-wrap {
+    overflow-x: auto;
+}
+
+.invoice-table th,
+.invoice-table td {
+    color: #1f2937;
+}
+
+.invoice-total {
+    display: grid;
+    gap: 0.75rem;
+    margin-left: auto;
+    margin-top: 1.25rem;
+    max-width: 360px;
+}
+
+.invoice-total div {
+    display: flex;
+    justify-content: space-between;
+}
+
+.grand-total {
+    border-top: 1px solid #dbe3f3;
+    padding-top: 0.75rem;
+}
+
+.grand-total strong {
+    color: var(--primary);
+    font-size: 1.2rem;
+}
+
 @media (max-width: 768px) {
     .hero-grid { grid-template-columns: 1fr; }
     h1 { font-size: 2.5rem; }
     .grid-cols-3, .grid-cols-4 { grid-template-columns: 1fr; }
     .admin-sidebar { display: none; }
     .admin-content { margin-left: 0; }
+    .order-card-head,
+    .admin-order-card,
+    .admin-order-title,
+    .order-actions,
+    .invoice-header {
+        align-items: stretch;
+        flex-direction: column;
+    }
+    .order-detail-grid,
+    .admin-order-meta,
+    .invoice-meta {
+        grid-template-columns: 1fr;
+    }
+    .admin-order-actions {
+        border-left: 0;
+        border-top: 1px solid rgba(163, 174, 208, 0.24);
+        min-width: 0;
+        padding-left: 0;
+        padding-top: 1rem;
+        width: 100%;
+    }
+    .status-steps {
+        gap: 0.35rem;
+    }
+    .status-step span {
+        font-size: 0.72rem;
+    }
+    .status-dot {
+        height: 34px;
+        width: 34px;
+    }
+    .status-steps::before {
+        top: 15px;
+    }
+}
+
+@media print {
+    @page {
+        margin: 12mm;
+        size: A4;
+    }
+
+    body {
+        background: white !important;
+        color: #111827 !important;
+    }
+
+    .no-print,
+    .navbar,
+    .admin-sidebar,
+    .admin-content > .flex:first-child {
+        display: none !important;
+    }
+
+    .admin-content {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .invoice-sheet {
+        border-radius: 0;
+        box-shadow: none;
+        max-width: none;
+        padding: 0;
+        width: 100%;
+    }
+
+    .invoice-meta,
+    .invoice-total,
+    .invoice-meta div {
+        break-inside: avoid;
+    }
+
+    .invoice-table th,
+    .invoice-table td {
+        border-bottom: 1px solid #d1d5db;
+        padding: 8px 10px;
+    }
 }

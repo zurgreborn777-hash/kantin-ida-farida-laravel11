@@ -37,10 +37,13 @@
             location: '',
             
             // Map & Shipping simulation state
-            canteenCoords: [-6.168417, 106.834167], // Coordinate of Kantin Ibu Ida
+            canteenCoords: [{{ config('canteen.latitude') }}, {{ config('canteen.longitude') }}],
+            maxDeliveryKm: {{ config('canteen.max_delivery_km') }},
             buyerCoords: null,
             distance: 0,
             ongkir: 0,
+            locationInRange: true,
+            distanceMessage: 'Pilih lokasi pengiriman.',
             
             initMap() {
                 // Initialize map centered at canteen coordinates
@@ -94,6 +97,10 @@
                             
                             // Shipping Fee: Rp 5.000 / 500 meters (0.5 Km)
                             this.ongkir = Math.ceil(this.distance * 2) * 5000;
+                            this.locationInRange = parseFloat(this.distance) <= this.maxDeliveryKm;
+                            this.distanceMessage = this.locationInRange
+                                ? `Lokasi masuk jangkauan ${this.maxDeliveryKm} KM`
+                                : 'Lokasi di luar jangkauan 2 KM';
                             
                             // Draw Route Polyline
                             if (routeLine) map.removeLayer(routeLine);
@@ -185,6 +192,10 @@
             async checkout(paymentMethod) {
                 if (!this.location.trim()) {
                     alert('Mohon masukkan lokasi pengiriman!');
+                    return;
+                }
+                if (!this.locationInRange) {
+                    alert('Lokasi di luar jangkauan 2 KM');
                     return;
                 }
                 this.isProcessing = true;
@@ -284,8 +295,12 @@
                     <label class="label">Pilih Lokasi Pengiriman di Peta</label>
                     <div id="map" style="height: 220px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.1); margin-top: 0.5rem; overflow: hidden; box-shadow: var(--shadow-subtle);"></div>
                     <small style="color: var(--text-muted); display: block; margin-top: 0.3rem;">
-                        <i class="fa-solid fa-circle-info"></i> Geser penanda biru <span style="color: #00d2d3; font-weight: bold;">●</span> ke lokasi Anda atau klik area di peta.
+                        <i class="fa-solid fa-circle-info"></i> Geser penanda biru ke lokasi Anda atau klik area di peta.
                     </small>
+                    <div class="range-alert" :class="locationInRange ? 'range-ok' : 'range-error'" style="margin-top:0.75rem;">
+                        <i class="fa-solid" :class="locationInRange ? 'fa-circle-check' : 'fa-triangle-exclamation'"></i>
+                        <span x-text="distanceMessage"></span>
+                    </div>
                 </div>
 
                 <div class="mb-2">
@@ -321,7 +336,7 @@
                 </div>
 
                 <div class="mt-2">
-                    <button @click="checkout(paymentMethod)" class="btn btn-primary" style="width: 100%; font-size: 1.1rem; padding: 1rem;" x-bind:disabled="isProcessing">
+                    <button @click="checkout(paymentMethod)" class="btn btn-primary" style="width: 100%; font-size: 1.1rem; padding: 1rem;" x-bind:disabled="isProcessing || !locationInRange">
                         <span x-show="!isProcessing"><i class="fa-solid fa-lock"></i> Bayar Sekarang</span>
                         <span x-show="isProcessing" style="display: none;"><i class="fa-solid fa-spinner fa-spin"></i> Memproses...</span>
                     </button>

@@ -42,6 +42,7 @@ Route::middleware('auth')->group(function () {
     
     Route::get('/orders', [HomeController::class, 'myOrders'])->name('orders.my');
     Route::post('/orders/{id}/confirm', [HomeController::class, 'confirmOrder'])->name('orders.confirm');
+    Route::get('/invoice/{order}', [HomeController::class, 'invoice'])->name('invoice.show');
 });
 
 Route::post('/callback', [HomeController::class, 'callback'])->name('payment.callback');

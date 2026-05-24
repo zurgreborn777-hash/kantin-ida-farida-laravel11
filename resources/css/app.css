@@ -1634,19 +1634,6 @@ tbody tr:hover {
     white-space: normal;
 }
 
-.invoice-badge {
-    align-self: end;
-    background: var(--secondary);
-    border-radius: 2px;
-    color: white;
-    font-size: 0.62rem;
-    font-style: italic;
-    font-weight: 900;
-    justify-self: start;
-    line-height: 1;
-    padding: 0.2rem 0.32rem;
-}
-
 .invoice-watermark {
     align-items: center;
     border: 8px solid rgba(255, 51, 102, 0.07);

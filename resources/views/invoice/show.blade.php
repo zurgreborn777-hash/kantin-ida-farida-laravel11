@@ -92,7 +92,7 @@
             </div>
 
             <section class="invoice-summary">
-                <div class="invoice-badge">PLUS</div>
+                <div></div>
 
                 <div class="invoice-total">
                     <div>

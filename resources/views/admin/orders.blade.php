@@ -45,7 +45,7 @@
             </div>
         </button>
 
-        <div class="accordion-panel" x-show="open" x-transition:enter="accordion-enter" x-transition:enter-start="accordion-enter-start" x-transition:enter-end="accordion-enter-end" x-transition:leave="accordion-leave" x-transition:leave-start="accordion-leave-start" x-transition:leave-end="accordion-leave-end">
+        <div class="accordion-panel">
             <div class="accordion-panel-inner admin-accordion-inner">
                 <div class="admin-order-meta">
                     <div>

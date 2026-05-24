@@ -40,7 +40,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/checkout', [HomeController::class, 'checkout'])->name('order.checkout');
     Route::post('/payment/success', [HomeController::class, 'paymentSuccess'])->name('payment.success');
     
-
+    Route::get('/orders', [HomeController::class, 'myOrders'])->name('orders.my');
+    Route::post('/orders/{id}/confirm', [HomeController::class, 'confirmOrder'])->name('orders.confirm');
 });
 
 Route::post('/callback', [HomeController::class, 'callback'])->name('payment.callback');

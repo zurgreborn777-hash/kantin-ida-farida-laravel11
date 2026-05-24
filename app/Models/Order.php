@@ -14,6 +14,10 @@ class Order extends Model
         'status',
         'total_price',
         'location',
+        'shipping_fee',
+        'latitude',
+        'longitude',
+        'distance_km',
     ];
 
     public function user()

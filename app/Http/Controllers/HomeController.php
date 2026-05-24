@@ -203,7 +203,11 @@ class HomeController extends Controller
     public function checkout(Request $request)
     {
         $request->validate([
-            'location' => 'required|string|max:1000'
+            'location' => 'required|string|max:1000',
+            'ongkir' => 'nullable|integer',
+            'distance' => 'nullable|numeric',
+            'lat' => 'nullable|numeric',
+            'lng' => 'nullable|numeric',
         ]);
 
         $order = Order::where('user_id', Auth::id())
@@ -219,7 +223,19 @@ class HomeController extends Controller
                 : redirect()->back()->withErrors(['cart' => 'Keranjang kosong!']);
         }
 
+        $basePrice = 0;
+        foreach ($order->items as $item) {
+            $basePrice += ($item->price * $item->quantity);
+        }
+
+        $ongkir = (int)$request->input('ongkir', 0);
+
         $order->location = $request->location;
+        $order->shipping_fee = $ongkir;
+        $order->latitude = $request->lat;
+        $order->longitude = $request->lng;
+        $order->distance_km = $request->distance;
+        $order->total_price = $basePrice + $ongkir;
         $order->save();
 
         // Re-fetch to ensure fresh items and relations
@@ -311,7 +327,7 @@ class HomeController extends Controller
                 $orderId = explode('-', $merchantOrderId)[0];
                 $order = Order::find($orderId);
                 if ($order && $order->status == 'pending') {
-                    $order->status = 'completed';
+                    $order->status = 'dibuat';
                     $order->save();
 
                     // Update stok menu
@@ -331,5 +347,37 @@ class HomeController extends Controller
     public function paymentSuccess(Request $request)
     {
         return redirect(route('home'))->with('success', 'Pembayaran berhasil! Pesanan Anda sedang diproses.');
+    }
+
+    public function myOrders()
+    {
+        $orders = Order::where('user_id', Auth::id())
+            ->where('status', '!=', 'pending')
+            ->orderBy('created_at', 'desc')
+            ->get();
+            
+        // Check for orders that are "sampai" and > 24 hours old, auto-complete them
+        foreach ($orders as $order) {
+            if ($order->status == 'sampai') {
+                $hoursDiff = \Carbon\Carbon::now()->diffInHours($order->updated_at);
+                if ($hoursDiff >= 24) {
+                    $order->status = 'selesai';
+                    $order->save();
+                }
+            }
+        }
+            
+        return view('orders', compact('orders'));
+    }
+
+    public function confirmOrder(Request $request, $id)
+    {
+        $order = Order::where('user_id', Auth::id())->findOrFail($id);
+        if ($order->status == 'sampai') {
+            $order->status = 'selesai';
+            $order->save();
+            return redirect()->back()->with('success', 'Pesanan telah dikonfirmasi selesai. Terima kasih!');
+        }
+        return redirect()->back()->withErrors(['error' => 'Pesanan tidak valid untuk dikonfirmasi.']);
     }
 }

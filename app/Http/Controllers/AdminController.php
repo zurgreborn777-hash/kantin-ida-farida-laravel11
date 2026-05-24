@@ -12,7 +12,7 @@ class AdminController extends Controller
     public function index()
     {
         $totalOrders = Order::count();
-        $totalRevenue = Order::where('status', 'completed')->sum('total_price');
+        $totalRevenue = Order::whereIn('status', ['dibuat', 'diantar', 'sampai', 'selesai'])->sum('total_price');
         $totalUsers = User::where('is_admin', false)->count();
         $orders = Order::with('user')->orderBy('created_at', 'desc')->take(5)->get();
         return view('admin.dashboard', compact('totalOrders', 'totalRevenue', 'totalUsers', 'orders'));
@@ -97,6 +97,18 @@ class AdminController extends Controller
     public function orders()
     {
         $orders = Order::with('user', 'items.menu')->orderBy('created_at', 'desc')->get();
+        
+        // Auto-complete orders that are "sampai" and > 24 hours old
+        foreach ($orders as $order) {
+            if ($order->status == 'sampai') {
+                $hoursDiff = \Carbon\Carbon::now()->diffInHours($order->updated_at);
+                if ($hoursDiff >= 24) {
+                    $order->status = 'selesai';
+                    $order->save();
+                }
+            }
+        }
+        
         return view('admin.orders', compact('orders'));
     }
 

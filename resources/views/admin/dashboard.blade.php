@@ -38,9 +38,19 @@
                     <td>{{ $order->user->name }}</td>
                     <td>Rp {{ number_format($order->total_price, 0, ',', '.') }}</td>
                     <td>
-                        <span style="padding: 0.2rem 0.8rem; border-radius: var(--radius-full); font-size: 0.8rem; font-weight:bold; background: {{ $order->status == 'completed' ? 'rgba(0,210,211,0.1)' : 'rgba(255,165,0,0.1)' }}; color: {{ $order->status == 'completed' ? 'var(--accent)' : 'orange' }};">
-                            {{ ucfirst($order->status) }}
-                        </span>
+                        @if($order->status == 'pending')
+                            <span class="badge" style="background:var(--surface); color:var(--text-muted);"><i class="fa-solid fa-cart-shopping"></i> Keranjang</span>
+                        @elseif($order->status == 'dibuat')
+                            <span class="badge" style="background:var(--accent);"><i class="fa-solid fa-box"></i> Dibuat</span>
+                        @elseif($order->status == 'diantar')
+                            <span class="badge" style="background:#f39c12; color:white;"><i class="fa-solid fa-motorcycle"></i> Diantar</span>
+                        @elseif($order->status == 'sampai')
+                            <span class="badge" style="background:#3498db; color:white;"><i class="fa-solid fa-location-dot"></i> Sampai</span>
+                        @elseif($order->status == 'selesai')
+                            <span class="badge" style="background:#2ecc71; color:white;"><i class="fa-solid fa-check-double"></i> Selesai</span>
+                        @else
+                            <span class="badge" style="background:var(--surface); color:var(--text-muted);">{{ ucfirst($order->status) }}</span>
+                        @endif
                     </td>
                     <td>{{ $order->created_at->diffForHumans() }}</td>
                 </tr>

@@ -1,6 +1,10 @@
 @extends('layouts.app')
 
 @section('content')
+<!-- Leaflet Map CSS & JS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <!-- Duitku Payment Integration -->
 
 <section class="hero" style="min-height: auto; padding: 6rem 0 3rem 0; background: var(--surface);">
@@ -28,8 +32,112 @@
         @if($order && $order->items->count() > 0)
         <div class="grid" style="grid-template-columns: 2fr 1fr;" x-data="{ 
             totalPrice: '{{ number_format($order->total_price, 0, ',', '.') }}',
+            basePrice: {{ (int)$order->total_price }},
             paymentMethod: 'SP',
             location: '',
+            
+            // Map & Shipping simulation state
+            canteenCoords: [-6.168417, 106.834167], // Coordinate of Kantin Ibu Ida
+            buyerCoords: null,
+            distance: 0,
+            ongkir: 0,
+            
+            initMap() {
+                // Initialize map centered at canteen coordinates
+                const map = L.map('map').setView(this.canteenCoords, 14);
+                
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(map);
+
+                // Add Red Marker for Canteen
+                L.marker(this.canteenCoords, {
+                    icon: L.icon({
+                        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34],
+                        shadowSize: [41, 41]
+                    })
+                }).addTo(map).bindPopup('<b>Kantin Ibu Ida</b>').openPopup();
+
+                // Add Draggable Blue Marker for Buyer
+                const defaultBuyer = [this.canteenCoords[0] - 0.005, this.canteenCoords[1] + 0.005];
+                this.buyerCoords = defaultBuyer;
+                
+                const buyerMarker = L.marker(defaultBuyer, {
+                    draggable: true,
+                    icon: L.icon({
+                        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34],
+                        shadowSize: [41, 41]
+                    })
+                }).addTo(map);
+
+                let routeLine = null;
+
+                // Function to fetch route from OSRM and reverse geocode using Nominatim
+                const getRouteAndAddress = async (lat, lng) => {
+                    try {
+                        // 1. Fetch Driving Route and Distance from OSRM API
+                        const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${this.canteenCoords[1]},${this.canteenCoords[0]};${lng},${lat}?overview=full&geometries=geojson`;
+                        const response = await fetch(osrmUrl);
+                        const data = await response.json();
+                        
+                        if (data.routes && data.routes.length > 0) {
+                            const distanceMeters = data.routes[0].distance;
+                            this.distance = (distanceMeters / 1000).toFixed(2);
+                            
+                            // Shipping Fee: Rp 5.000 / 500 meters (0.5 Km)
+                            this.ongkir = Math.ceil(this.distance * 2) * 5000;
+                            
+                            // Draw Route Polyline
+                            if (routeLine) map.removeLayer(routeLine);
+                            routeLine = L.geoJSON(data.routes[0].geometry, {
+                                style: { color: '#FF3366', weight: 5, opacity: 0.7 }
+                            }).addTo(map);
+
+                            // Fit bounds to show both markers
+                            const bounds = L.latLngBounds([this.canteenCoords, [lat, lng]]);
+                            map.fitBounds(bounds, { padding: [40, 40] });
+                        }
+
+                        // 2. Reverse Geocode coordinate using OpenStreetMap Nominatim
+                        const geocodeUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18`;
+                        const geoResponse = await fetch(geocodeUrl);
+                        const geoData = await geoResponse.json();
+                        if (geoData && geoData.display_name) {
+                            this.location = geoData.display_name;
+                        } else {
+                            this.location = `Koordinat: ${lat}, ${lng}`;
+                        }
+                    } catch (err) {
+                        console.error('Routing / Geocoding Error:', err);
+                    }
+                };
+
+                // Initial calculation
+                getRouteAndAddress(defaultBuyer[0], defaultBuyer[1]);
+
+                // Update on marker drag
+                buyerMarker.on('dragend', (e) => {
+                    const pos = e.target.getLatLng();
+                    this.buyerCoords = [pos.lat, pos.lng];
+                    getRouteAndAddress(pos.lat, pos.lng);
+                });
+
+                // Update on map click
+                map.on('click', (e) => {
+                    buyerMarker.setLatLng(e.latlng);
+                    this.buyerCoords = [e.latlng.lat, e.latlng.lng];
+                    getRouteAndAddress(e.latlng.lat, e.latlng.lng);
+                });
+            },
+            
             async updateQuantity(itemId, action) {
                 const response = await fetch(`/cart/update/${itemId}`, {
                     method: 'POST',
@@ -44,6 +152,7 @@
                 if (data.success) {
                     $store.cart.updateCount(data.cartCount);
                     this.totalPrice = data.totalPrice;
+                    this.basePrice = parseInt(data.totalPrice.replace(/\./g, ''));
                     if (data.itemQuantity === 0) {
                         document.getElementById(`cart-item-${itemId}`).remove();
                         if (data.cartCount === 0) location.reload();
@@ -67,6 +176,7 @@
                 if (data.success) {
                     $store.cart.updateCount(data.cartCount);
                     this.totalPrice = data.totalPrice;
+                    this.basePrice = parseInt(data.totalPrice.replace(/\./g, ''));
                     document.getElementById(`cart-item-${itemId}`).remove();
                     if (data.cartCount === 0) location.reload();
                 }
@@ -86,7 +196,14 @@
                             'X-CSRF-TOKEN': '{{ csrf_token() }}',
                             'Accept': 'application/json'
                         },
-                        body: JSON.stringify({ paymentMethod: paymentMethod, location: this.location })
+                        body: JSON.stringify({ 
+                            paymentMethod: paymentMethod, 
+                            location: this.location,
+                            ongkir: this.ongkir,
+                            distance: this.distance,
+                            lat: this.buyerCoords ? this.buyerCoords[0] : null,
+                            lng: this.buyerCoords ? this.buyerCoords[1] : null
+                        })
                     });
                     const data = await response.json();
                     
@@ -101,7 +218,7 @@
                     this.isProcessing = false;
                 }
             }
-        }">
+        }" x-init="initMap()">
             <!-- Cart Items -->
             <div class="card animate-fade-in-up">
                 <h3>Daftar Item</h3>
@@ -134,13 +251,45 @@
             <div class="card animate-fade-in-up delay-100" style="align-self: start;">
                 <h3>Ringkasan Pembayaran</h3>
                 
+                <!-- Pricing Breakdown -->
                 <div class="flex justify-between mt-2 mb-1">
-                    <span style="color: var(--text-muted);">Total Harga:</span>
+                    <span style="color: var(--text-muted);">Subtotal Menu:</span>
                     <span style="font-weight: bold;">Rp <span x-text="totalPrice"></span></span>
                 </div>
 
+                <div class="flex justify-between mt-1 mb-1">
+                    <span style="color: var(--text-muted);">Ongkos Kirim:</span>
+                    <span style="font-weight: bold;" x-show="ongkir > 0">
+                        Rp <span x-text="new Intl.NumberFormat('id-ID').format(ongkir)"></span> 
+                        <span style="font-size: 0.8rem; font-weight: normal; color: var(--text-muted);">
+                            (<span x-text="distance"></span> Km)
+                        </span>
+                    </span>
+                    <span style="font-weight: bold; color: var(--text-muted);" x-show="ongkir === 0">
+                        Menghitung...
+                    </span>
+                </div>
+
+                <hr style="border: 0; border-top: 1px solid rgba(0,0,0,0.08); margin: 0.75rem 0;">
+
+                <div class="flex justify-between mt-1 mb-2" style="font-size: 1.2rem;">
+                    <span style="font-weight: bold;">Total Bayar:</span>
+                    <span style="font-weight: 900; color: var(--primary);">
+                        Rp <span x-text="new Intl.NumberFormat('id-ID').format(basePrice + ongkir)"></span>
+                    </span>
+                </div>
+
+                <!-- Map Container -->
+                <div class="mb-2" style="z-index: 1;">
+                    <label class="label">Pilih Lokasi Pengiriman di Peta</label>
+                    <div id="map" style="height: 220px; border-radius: 12px; border: 1px solid rgba(0,0,0,0.1); margin-top: 0.5rem; overflow: hidden; box-shadow: var(--shadow-subtle);"></div>
+                    <small style="color: var(--text-muted); display: block; margin-top: 0.3rem;">
+                        <i class="fa-solid fa-circle-info"></i> Geser penanda biru <span style="color: #00d2d3; font-weight: bold;">●</span> ke lokasi Anda atau klik area di peta.
+                    </small>
+                </div>
+
                 <div class="mb-2">
-                    <label class="label">Lokasi Pengiriman *</label>
+                    <label class="label">Alamat Pengiriman (Otomatis dari Peta) *</label>
                     <textarea x-model="location" class="input" rows="2" placeholder="Masukkan alamat lengkap atau detail lokasi untuk diantar..." required></textarea>
                 </div>
 

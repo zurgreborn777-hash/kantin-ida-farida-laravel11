@@ -69,6 +69,7 @@
                         </button>
                         <div x-show="open" @click.away="open = false" style="position:absolute; top:120%; right:0; background:white; padding:1rem; border-radius:var(--radius-md); box-shadow:var(--shadow-strong); min-width: 200px; display:none;" :style="{display: open ? 'block' : 'none'}">
                             <a href="{{ route('profile') }}" class="btn btn-outline" style="width:100%; margin-bottom: 0.5rem; justify-content: center;">Profil Saya</a>
+                            <a href="{{ route('orders.my') }}" class="btn btn-outline" style="width:100%; margin-bottom: 0.5rem; justify-content: center;">Pesanan Saya</a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="btn btn-primary" style="width:100%">Logout</button>

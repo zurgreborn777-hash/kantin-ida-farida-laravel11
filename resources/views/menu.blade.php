@@ -7,8 +7,8 @@
     <div class="dashboard-container">
         <div class="menu-hero animate-fade-in-up">
             <div>
-                <h1>Taste the Tradition</h1>
-                <p>Carefully curated authentic recipes served with a modern twist. From our kitchen to your table.</p>
+                <h1>Rasa Rumahan Pilihan</h1>
+                <p>Menu autentik yang diracik telaten dengan sentuhan modern, langsung dari dapur Ibu Ida ke meja makanmu.</p>
             </div>
 
             <label class="menu-search" aria-label="Cari menu">
@@ -91,7 +91,7 @@
                             @endif
                         </div>
                         @else
-                            <a href="{{ route('login') }}" class="menu-login-link">Login untuk Pesan</a>
+                            <a href="{{ route('login') }}" class="menu-login-link">Masuk untuk Pesan</a>
                         @endauth
                         <a href="{{ route('menu.show', $menu) }}" class="menu-detail-link">Lihat Detail</a>
                     </div>

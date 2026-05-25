@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Manajemen Orders')
+@section('title', 'Manajemen Pesanan')
 
 @section('content')
 @php
@@ -11,7 +11,7 @@
 
 <div class="admin-page-head">
     <div>
-        <p class="eyebrow">Order Management</p>
+        <p class="eyebrow">Manajemen Pesanan</p>
         <h3>Daftar Pesanan</h3>
     </div>
     <span class="admin-count">{{ $orders->count() }} pesanan</span>

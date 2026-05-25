@@ -6,15 +6,15 @@
 <section class="auth-page">
     <div class="auth-shell dashboard-container">
         <div class="auth-visual animate-fade-in-up">
-            <span class="auth-pill">Private Kitchen Access</span>
+            <span class="auth-pill">Akses Dapur Ibu Ida</span>
             <h1>Masuk ke meja makan Ibu Ida.</h1>
             <p>Pesan nasi rames harian, pantau checkout, dan lanjutkan pesanan favorit dalam suasana dapur rumahan yang hangat.</p>
 
             <div class="auth-preview-card">
                 <img src="https://images.unsplash.com/photo-1512058564366-18510be2db19?q=80&w=900&auto=format&fit=crop" alt="Nasi rames rumahan">
                 <div>
-                    <span>Signature Today</span>
-                    <strong>Nasi Rames Heritage</strong>
+                    <span>Andalan Hari Ini</span>
+                    <strong>Nasi Rames Warisan</strong>
                 </div>
             </div>
         </div>
@@ -25,8 +25,8 @@
             </div>
 
             <div class="auth-heading">
-                <span>Welcome Back</span>
-                <h2>Login</h2>
+                <span>Selamat Datang Kembali</span>
+                <h2>Masuk</h2>
                 <p>Silakan masuk untuk melanjutkan pesananmu.</p>
             </div>
 
@@ -48,10 +48,10 @@
                 </div>
 
                 <div class="auth-field">
-                    <label for="password">Password</label>
+                    <label for="password">Kata Sandi</label>
                     <div class="auth-input-wrap">
                         <i class="fa-solid fa-lock"></i>
-                        <input id="password" type="password" name="password" required placeholder="Masukkan password">
+                        <input id="password" type="password" name="password" required placeholder="Masukkan kata sandi">
                     </div>
                 </div>
 

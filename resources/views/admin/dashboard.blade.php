@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Dashboard Overview')
+@section('title', 'Ringkasan Dasbor')
 
 @section('content')
 <div class="grid grid-cols-3 mb-4">

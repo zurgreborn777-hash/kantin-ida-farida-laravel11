@@ -89,12 +89,12 @@
             </a>
             
             <div class="nav-links">
-                <a href="{{ route('home') }}" class="nav-link">Home</a>
+                <a href="{{ route('home') }}" class="nav-link">Beranda</a>
                 <a href="{{ route('menu') }}" class="nav-link">Menu</a>
                 
                 @auth
                     @if(auth()->user()->is_admin)
-                        <a href="/admin" class="nav-link">Admin Panel</a>
+                        <a href="/admin" class="nav-link">Panel Admin</a>
                     @endif
 
                     
@@ -112,12 +112,12 @@
                             <a href="{{ route('orders.my') }}" class="btn btn-outline" style="width:100%; margin-bottom: 0.5rem; justify-content: center;">Pesanan Saya</a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button type="submit" class="btn btn-primary" style="width:100%">Logout</button>
+                                <button type="submit" class="btn btn-primary" style="width:100%">Keluar</button>
                             </form>
                         </div>
                     </div>
                 @else
-                    <a href="{{ route('login') }}" class="btn btn-primary">Login</a>
+                    <a href="{{ route('login') }}" class="btn btn-primary">Masuk</a>
                 @endauth
             </div>
         </div>
@@ -147,13 +147,13 @@
 
             <div class="footer-panel">
                 <h4>Navigasi</h4>
-                <a href="{{ route('home') }}">Home</a>
+                <a href="{{ route('home') }}">Beranda</a>
                 <a href="{{ route('menu') }}">Menu</a>
                 @auth
                     <a href="{{ route('orders.my') }}">Pesanan Saya</a>
                     <a href="{{ route('cart') }}">Keranjang</a>
                 @else
-                    <a href="{{ route('login') }}">Login</a>
+                    <a href="{{ route('login') }}">Masuk</a>
                 @endauth
             </div>
 
@@ -169,14 +169,14 @@
                 </div>
                 <div class="footer-service">
                     <i class="fa-solid fa-file-invoice"></i>
-                    <span>Invoice tersedia setelah pesanan dibuat.</span>
+                    <span>Nota tersedia setelah pesanan dibuat.</span>
                 </div>
             </div>
         </div>
 
         <div class="container footer-bottom">
-            <span>&copy; {{ date('Y') }} Kantin Ibu Ida. All rights reserved.</span>
-            <span>Fresh food, simple checkout, real Railway testing.</span>
+            <span>&copy; {{ date('Y') }} Kantin Ibu Ida. Hak cipta dilindungi.</span>
+            <span>Makanan segar, checkout sederhana, dan pengujian Railway yang nyata.</span>
         </div>
     </footer>
 

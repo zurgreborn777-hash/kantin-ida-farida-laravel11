@@ -25,16 +25,16 @@
         </a>
         <div class="mt-4">
             <a href="/admin" class="nav-item {{ request()->is('admin') ? 'active' : '' }}">
-                <i class="fa-solid fa-chart-pie"></i> Dashboard
+                <i class="fa-solid fa-chart-pie"></i> Dasbor
             </a>
             <a href="/admin/menus" class="nav-item {{ request()->is('admin/menus*') ? 'active' : '' }}">
-                <i class="fa-solid fa-burger"></i> Menus
+                <i class="fa-solid fa-burger"></i> Menu
             </a>
             <a href="/admin/orders" class="nav-item {{ request()->is('admin/orders*') ? 'active' : '' }}">
-                <i class="fa-solid fa-receipt"></i> Orders
+                <i class="fa-solid fa-receipt"></i> Pesanan
             </a>
             <a href="/admin/users" class="nav-item {{ request()->is('admin/users*') ? 'active' : '' }}">
-                <i class="fa-solid fa-users"></i> Users
+                <i class="fa-solid fa-users"></i> Pengguna
             </a>
             <a href="/admin/kasir" class="nav-item {{ request()->is('admin/kasir*') ? 'active' : '' }}">
                 <i class="fa-solid fa-cash-register"></i> Kasir
@@ -45,14 +45,14 @@
         <div style="position:absolute; bottom:2rem; width:calc(100% - 4rem);">
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <button type="submit" class="btn btn-outline" style="width:100%"><i class="fa-solid fa-sign-out"></i> Logout</button>
+                <button type="submit" class="btn btn-outline" style="width:100%"><i class="fa-solid fa-sign-out"></i> Keluar</button>
             </form>
         </div>
     </aside>
 
     <main class="admin-content animate-fade-in-up delay-100">
         <div class="flex justify-between items-center mb-4">
-            <h2>@yield('title', 'Dashboard')</h2>
+            <h2>@yield('title', 'Dasbor')</h2>
             <div class="flex items-center gap-1">
                 <span style="font-weight:bold;">Admin {{ auth()->user()->name }}</span>
             </div>

@@ -1,10 +1,10 @@
 @extends('layouts.admin')
 
-@section('title', 'Manajemen Users')
+@section('title', 'Manajemen Pengguna')
 
 @section('content')
 <div class="card">
-    <h3>Daftar Users</h3>
+    <h3>Daftar Pengguna</h3>
     @if(session('success'))
         <div style="color: var(--accent); margin-bottom: 1rem;">{{ session('success') }}</div>
     @endif
@@ -15,7 +15,7 @@
                     <th>ID</th>
                     <th>Nama</th>
                     <th>Email</th>
-                    <th>Role</th>
+                    <th>Peran</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -37,7 +37,7 @@
                     </td>
                     <td>
                         <span style="padding: 0.2rem 0.5rem; border-radius: var(--radius-full); font-size: 0.8rem; background: {{ $user->is_admin ? 'var(--theme-primary-soft)' : 'var(--theme-muted)' }}; color: {{ $user->is_admin ? 'var(--theme-primary-contrast)' : 'var(--theme-text-muted)' }};">
-                            {{ $user->is_admin ? 'Admin' : 'User' }}
+                            {{ $user->is_admin ? 'Admin' : 'Pengguna' }}
                         </span>
                     </td>
                     <td>

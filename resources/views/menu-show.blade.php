@@ -104,7 +104,7 @@
                 @else
                     <a href="{{ route('login') }}" class="menu-detail-cart">
                         <i class="fa-solid fa-user"></i>
-                        <span>Login untuk Pesan</span>
+                        <span>Masuk untuk Pesan</span>
                     </a>
                 @endauth
             </div>

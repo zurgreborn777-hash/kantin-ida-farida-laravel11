@@ -23,17 +23,17 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="label">Email Address</label>
+                    <label class="label">Alamat Email</label>
                     <input type="email" name="email" class="input" required value="{{ old('email') }}">
                 </div>
                 
                 <div class="form-group">
-                    <label class="label">Password</label>
+                    <label class="label">Kata Sandi</label>
                     <input type="password" name="password" class="input" required>
                 </div>
 
                 <div class="form-group">
-                    <label class="label">Konfirmasi Password</label>
+                    <label class="label">Konfirmasi Kata Sandi</label>
                     <input type="password" name="password_confirmation" class="input" required>
                 </div>
                 
@@ -41,7 +41,7 @@
             </form>
             
             <div class="text-center mt-2">
-                <p>Sudah punya akun? <a href="{{ route('login') }}" style="color: var(--secondary); font-weight: bold;">Login di sini</a></p>
+                <p>Sudah punya akun? <a href="{{ route('login') }}" style="color: var(--secondary); font-weight: bold;">Masuk di sini</a></p>
             </div>
         </div>
     </div>

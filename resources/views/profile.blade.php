@@ -106,23 +106,23 @@
                     <div class="profile-setting-row">
                         <div>
                             <h3>Tema Website</h3>
-                            <p>Dark adalah tema premium yang sedang dipakai. White memberi tampilan lebih terang.</p>
+                            <p>Tema gelap memberi nuansa premium. Tema terang membuat tampilan lebih bersih dan cerah.</p>
                         </div>
                         <div class="profile-theme-switch">
                             <button type="button" :class="{ 'active': $store.preferences.theme === 'dark' }" @click="$store.preferences.setTheme('dark')">
                                 <i class="fa-solid fa-moon"></i>
-                                <span>Dark</span>
+                                <span>Gelap</span>
                             </button>
                             <button type="button" :class="{ 'active': $store.preferences.theme === 'light' }" @click="$store.preferences.setTheme('light')">
                                 <i class="fa-solid fa-sun"></i>
-                                <span>White</span>
+                                <span>Terang</span>
                             </button>
                         </div>
                     </div>
 
                     <div class="profile-setting-row">
                         <div>
-                            <h3>Reduce Animations</h3>
+                            <h3>Kurangi Animasi</h3>
                             <p>Matikan gerakan marquee, transisi, dan animasi masuk jika ingin pengalaman yang lebih tenang.</p>
                         </div>
                         <button

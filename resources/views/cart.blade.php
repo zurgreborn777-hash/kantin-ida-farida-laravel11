@@ -7,14 +7,14 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<!-- Duitku Payment Integration -->
+<!-- Integrasi Pembayaran Duitku -->
 
 <section class="cart-page">
     <div class="dashboard-container">
         <div class="cart-hero animate-fade-in-up">
-            <span>Secure Checkout</span>
+            <span>Checkout Aman</span>
             <h1>Keranjang Pesanan</h1>
-            <p>Review hidangan pilihanmu, tentukan lokasi antar, lalu lanjutkan pembayaran dengan aman.</p>
+            <p>Periksa hidangan pilihanmu, tentukan lokasi antar, lalu lanjutkan pembayaran dengan aman.</p>
         </div>
         
         @if(session('success'))
@@ -233,7 +233,7 @@
             <div class="cart-items-panel animate-fade-in-up">
                 <div class="cart-panel-head">
                     <div>
-                        <span>Order Review</span>
+                        <span>Periksa Pesanan</span>
                         <h2>Daftar Item</h2>
                     </div>
                     <a href="{{ route('menu') }}">Tambah Menu</a>
@@ -269,7 +269,7 @@
             <aside class="cart-summary-panel animate-fade-in-up delay-100">
                 <div class="cart-panel-head compact">
                     <div>
-                        <span>Payment Summary</span>
+                        <span>Ringkasan Pembayaran</span>
                         <h2>Ringkasan</h2>
                     </div>
                 </div>

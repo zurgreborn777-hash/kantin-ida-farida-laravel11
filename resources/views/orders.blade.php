@@ -28,7 +28,7 @@
 <section class="orders-page">
     <div class="dashboard-container">
         <div class="orders-hero animate-fade-in-up">
-            <span>Order Tracking</span>
+            <span>Lacak Pesanan</span>
             <h1>Pesanan Saya</h1>
             <p>Pantau status dapur, pengiriman, dan ringkasan pembayaran dari setiap pesananmu.</p>
         </div>

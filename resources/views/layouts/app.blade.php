@@ -8,16 +8,56 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,700&display=swap" rel="stylesheet">
     
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script>
+        (() => {
+            const savedTheme = localStorage.getItem('kantin-theme');
+            const systemTheme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+            const theme = savedTheme || systemTheme;
+            const reduceMotion = localStorage.getItem('kantin-reduce-motion') === 'true';
+            document.documentElement.classList.toggle('theme-light', theme === 'light');
+            document.documentElement.classList.toggle('theme-dark', theme === 'dark');
+            document.documentElement.classList.toggle('reduce-motion', reduceMotion);
+        })();
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <script>
         document.addEventListener('alpine:init', () => {
+            Alpine.store('preferences', {
+                theme: localStorage.getItem('kantin-theme') || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark'),
+                reduceMotion: localStorage.getItem('kantin-reduce-motion') === 'true',
+                init() {
+                    this.apply();
+                    window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (event) => {
+                        if (localStorage.getItem('kantin-theme')) return;
+                        this.theme = event.matches ? 'light' : 'dark';
+                        this.apply();
+                    });
+                },
+                setTheme(theme) {
+                    this.theme = theme;
+                    localStorage.setItem('kantin-theme', theme);
+                    this.apply();
+                },
+                toggleReduceMotion() {
+                    this.reduceMotion = !this.reduceMotion;
+                    localStorage.setItem('kantin-reduce-motion', this.reduceMotion ? 'true' : 'false');
+                    this.apply();
+                },
+                apply() {
+                    document.documentElement.classList.toggle('theme-light', this.theme === 'light');
+                    document.documentElement.classList.toggle('theme-dark', this.theme === 'dark');
+                    document.documentElement.classList.toggle('reduce-motion', this.reduceMotion);
+                }
+            });
+            Alpine.store('preferences').init();
+
             Alpine.store('cart', {
                 @auth
                 @php
@@ -39,7 +79,7 @@
         });
     </script>
 </head>
-<body>
+<body class="@yield('body_class')">
     
     <nav class="navbar animate-fade-in-up">
         <div class="container">

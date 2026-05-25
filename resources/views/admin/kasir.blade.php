@@ -29,7 +29,7 @@
             <input type="text" x-model="customerName" class="input" placeholder="Nama Pembeli" required>
         </div>
 
-        <div style="max-height: 300px; overflow-y: auto; border-top: 1px solid rgba(0,0,0,0.05); border-bottom: 1px solid rgba(0,0,0,0.05); padding: 0.5rem 0; margin-bottom: 1rem;">
+        <div style="max-height: 300px; overflow-y: auto; border-top: 1px solid var(--theme-border); border-bottom: 1px solid var(--theme-border); padding: 0.5rem 0; margin-bottom: 1rem;">
             <template x-if="cart.length === 0">
                 <div class="text-center" style="color: var(--text-muted); padding: 1rem 0;">Belum ada menu dipilih.</div>
             </template>

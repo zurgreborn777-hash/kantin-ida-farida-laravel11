@@ -12,13 +12,19 @@ class HomeController extends Controller
 {
     public function index()
     {
-        return view('welcome');
+        $menus = Menu::take(6)->get();
+        return view('welcome', compact('menus'));
     }
 
     public function menu()
     {
         $menus = Menu::all();
         return view('menu', compact('menus'));
+    }
+
+    public function menuShow(Menu $menu)
+    {
+        return view('menu-show', compact('menu'));
     }
 
     public function profile()

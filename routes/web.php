@@ -8,6 +8,7 @@ use App\Http\Controllers\AdminController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/menu', [HomeController::class, 'menu'])->name('menu');
+Route::get('/menu/{menu}', [HomeController::class, 'menuShow'])->name('menu.show');
 
 Route::get('/hello', function() {
     return "Hello! If you see this, the new code is deployed.";

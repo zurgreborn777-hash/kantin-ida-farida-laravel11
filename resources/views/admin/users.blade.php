@@ -36,7 +36,7 @@
                         </form>
                     </td>
                     <td>
-                        <span style="padding: 0.2rem 0.5rem; border-radius: var(--radius-full); font-size: 0.8rem; background: {{ $user->is_admin ? 'rgba(255, 51, 102, 0.1)' : 'rgba(112, 144, 176, 0.1)' }}; color: {{ $user->is_admin ? 'var(--primary)' : 'var(--text-muted)' }};">
+                        <span style="padding: 0.2rem 0.5rem; border-radius: var(--radius-full); font-size: 0.8rem; background: {{ $user->is_admin ? 'var(--theme-primary-soft)' : 'var(--theme-muted)' }}; color: {{ $user->is_admin ? 'var(--theme-primary-contrast)' : 'var(--theme-text-muted)' }};">
                             {{ $user->is_admin ? 'Admin' : 'User' }}
                         </span>
                     </td>

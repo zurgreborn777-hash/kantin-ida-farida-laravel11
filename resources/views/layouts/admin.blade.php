@@ -17,7 +17,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </head>
-<body style="background: #F4F7FE;">
+<body style="background: var(--background);">
     
     <aside class="admin-sidebar animate-fade-in-up">
         <a href="/" class="navbar-brand mb-4" style="display:block; text-align:center;">

@@ -5502,6 +5502,65 @@ body,
     color: var(--theme-text) !important;
 }
 
+.account-menu {
+    margin-left: 0.5rem;
+    position: relative;
+}
+
+.account-trigger {
+    padding: 0.5rem 1rem !important;
+}
+
+.account-dropdown {
+    background: var(--theme-card) !important;
+    border: 1px solid var(--theme-border) !important;
+    border-radius: var(--radius-md);
+    box-shadow: var(--theme-shadow) !important;
+    gap: 0.65rem;
+    min-width: 210px;
+    padding: 1rem;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 0.75rem);
+    z-index: 300;
+}
+
+.account-dropdown-link,
+.account-dropdown-logout {
+    align-items: center;
+    border-radius: 8px;
+    display: flex;
+    font: inherit;
+    font-weight: 900;
+    justify-content: center;
+    min-height: 42px;
+    padding: 0.65rem 0.9rem;
+    text-decoration: none;
+    width: 100%;
+}
+
+.account-dropdown-link {
+    background: var(--theme-input) !important;
+    border: 1px solid var(--theme-border-strong) !important;
+    color: var(--theme-text) !important;
+}
+
+.account-dropdown-link:hover {
+    background: var(--theme-muted-hover) !important;
+    color: var(--theme-fg-strong) !important;
+}
+
+.account-dropdown-logout {
+    background: var(--theme-primary) !important;
+    border: 0;
+    color: var(--theme-primary-contrast) !important;
+    cursor: pointer;
+}
+
+.account-dropdown-logout:hover {
+    background: var(--theme-primary-hover) !important;
+}
+
 .profile-page,
 .menu-page,
 .menu-detail-page,

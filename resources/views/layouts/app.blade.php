@@ -103,16 +103,16 @@
                         <span class="badge" x-show="$store.cart.count > 0" x-text="$store.cart.count"></span>
                     </a>
 
-                    <div style="position:relative; margin-left: 0.5rem;" x-data="{ open: false }">
-                        <button @click="open = !open" class="btn btn-outline" style="padding: 0.5rem 1rem;">
+                    <div class="account-menu" x-data="{ open: false }">
+                        <button @click="open = !open" class="btn btn-outline account-trigger" type="button">
                             <i class="fa-solid fa-user"></i> {{ auth()->user()->name }}
                         </button>
-                        <div x-show="open" @click.away="open = false" style="position:absolute; top:120%; right:0; background:white; padding:1rem; border-radius:var(--radius-md); box-shadow:var(--shadow-strong); min-width: 200px; display:none;" :style="{display: open ? 'block' : 'none'}">
-                            <a href="{{ route('profile') }}" class="btn btn-outline" style="width:100%; margin-bottom: 0.5rem; justify-content: center;">Profil Saya</a>
-                            <a href="{{ route('orders.my') }}" class="btn btn-outline" style="width:100%; margin-bottom: 0.5rem; justify-content: center;">Pesanan Saya</a>
+                        <div x-show="open" @click.away="open = false" class="account-dropdown" style="display:none;" :style="{display: open ? 'grid' : 'none'}">
+                            <a href="{{ route('profile') }}" class="account-dropdown-link">Profil Saya</a>
+                            <a href="{{ route('orders.my') }}" class="account-dropdown-link">Pesanan Saya</a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button type="submit" class="btn btn-primary" style="width:100%">Keluar</button>
+                                <button type="submit" class="account-dropdown-logout">Keluar</button>
                             </form>
                         </div>
                     </div>

@@ -4618,6 +4618,219 @@ html.reduce-motion .home-marquee div {
     transform: none !important;
 }
 
+/* Admin UI cleanup: keep the back office readable and visually separate from storefront themes. */
+body.admin-dashboard {
+    --admin-bg: #f4f6fb;
+    --admin-surface: #ffffff;
+    --admin-surface-soft: #f8fafc;
+    --admin-text: #172033;
+    --admin-text-soft: #536079;
+    --admin-text-muted: #7b879d;
+    --admin-border: #e4e8f1;
+    --admin-primary: #f26342;
+    --admin-primary-soft: #fff0ea;
+    --admin-primary-hover: #dc5436;
+    --admin-accent: #0f9ea8;
+    --admin-secondary: #5f5af6;
+    --admin-shadow: 0 18px 42px rgba(31, 41, 55, 0.08);
+    background: var(--admin-bg) !important;
+    color: var(--admin-text) !important;
+}
+
+body.admin-dashboard,
+body.admin-dashboard p,
+body.admin-dashboard span,
+body.admin-dashboard td,
+body.admin-dashboard th,
+body.admin-dashboard label,
+body.admin-dashboard a,
+body.admin-dashboard button,
+body.admin-dashboard input,
+body.admin-dashboard select,
+body.admin-dashboard textarea {
+    color: var(--admin-text);
+}
+
+body.admin-dashboard h1,
+body.admin-dashboard h2,
+body.admin-dashboard h3,
+body.admin-dashboard h4,
+body.admin-dashboard strong {
+    color: var(--admin-text) !important;
+}
+
+body.admin-dashboard .admin-sidebar {
+    background: var(--admin-surface) !important;
+    border-right: 1px solid var(--admin-border);
+    box-shadow: 12px 0 40px rgba(31, 41, 55, 0.06) !important;
+}
+
+body.admin-dashboard .navbar-brand {
+    color: #1f2b5f !important;
+}
+
+body.admin-dashboard .navbar-brand span {
+    color: #ff3366 !important;
+}
+
+body.admin-dashboard .admin-content {
+    background: var(--admin-bg) !important;
+}
+
+body.admin-dashboard .admin-content > .flex:first-child {
+    color: var(--admin-text) !important;
+}
+
+body.admin-dashboard .admin-content > .flex:first-child span {
+    color: var(--admin-text-soft) !important;
+}
+
+body.admin-dashboard .nav-item {
+    background: transparent !important;
+    color: var(--admin-text-soft) !important;
+}
+
+body.admin-dashboard .nav-item i {
+    color: currentColor !important;
+}
+
+body.admin-dashboard .nav-item:hover,
+body.admin-dashboard .nav-item.active {
+    background: var(--admin-primary-soft) !important;
+    color: var(--admin-primary) !important;
+}
+
+body.admin-dashboard .card,
+body.admin-dashboard .table-container,
+body.admin-dashboard .accordion-card,
+body.admin-dashboard .admin-order-card {
+    background: var(--admin-surface) !important;
+    border: 1px solid var(--admin-border) !important;
+    box-shadow: var(--admin-shadow) !important;
+    color: var(--admin-text) !important;
+}
+
+body.admin-dashboard .card:hover {
+    transform: none;
+}
+
+body.admin-dashboard .dashboard-card-head .eyebrow,
+body.admin-dashboard .eyebrow,
+body.admin-dashboard .dashboard-empty,
+body.admin-dashboard .admin-order-meta span,
+body.admin-dashboard .admin-items span {
+    color: var(--admin-text-muted) !important;
+}
+
+body.admin-dashboard table {
+    background: var(--admin-surface) !important;
+    color: var(--admin-text) !important;
+}
+
+body.admin-dashboard th {
+    background: var(--admin-surface-soft) !important;
+    border-bottom: 1px solid var(--admin-border) !important;
+    color: var(--admin-text-soft) !important;
+}
+
+body.admin-dashboard td {
+    background: var(--admin-surface) !important;
+    border-bottom: 1px solid var(--admin-border) !important;
+    color: var(--admin-text) !important;
+}
+
+body.admin-dashboard tbody tr:hover td {
+    background: #fff8f4 !important;
+}
+
+body.admin-dashboard .btn-outline {
+    background: transparent !important;
+    border: 1px solid #ffd4c8 !important;
+    color: var(--admin-primary) !important;
+}
+
+body.admin-dashboard .btn-outline:hover {
+    background: var(--admin-primary-soft) !important;
+    color: var(--admin-primary-hover) !important;
+}
+
+body.admin-dashboard .btn-primary,
+body.admin-dashboard .btn-secondary {
+    background: var(--admin-primary) !important;
+    color: #2a1009 !important;
+    box-shadow: none !important;
+}
+
+body.admin-dashboard .input,
+body.admin-dashboard select,
+body.admin-dashboard input,
+body.admin-dashboard textarea {
+    background: #ffffff !important;
+    border-color: #d9deea !important;
+    color: var(--admin-text) !important;
+}
+
+body.admin-dashboard .input:focus,
+body.admin-dashboard select:focus,
+body.admin-dashboard input:focus,
+body.admin-dashboard textarea:focus {
+    border-color: var(--admin-primary) !important;
+    box-shadow: 0 0 0 4px rgba(242, 99, 66, 0.14) !important;
+}
+
+body.admin-dashboard .status-badge {
+    color: inherit !important;
+}
+
+body.admin-dashboard .status-pending {
+    background: #edf2f7 !important;
+    color: #4a5568 !important;
+}
+
+body.admin-dashboard .status-dibuat {
+    background: #dff8f8 !important;
+    color: #087f83 !important;
+}
+
+body.admin-dashboard .status-diantar {
+    background: #fff1d8 !important;
+    color: #995c00 !important;
+}
+
+body.admin-dashboard .status-sampai {
+    background: #e1f0ff !important;
+    color: #246a9f !important;
+}
+
+body.admin-dashboard .status-selesai {
+    background: #ddf7e9 !important;
+    color: #16734a !important;
+}
+
+body.admin-dashboard .action-btn.edit {
+    background: #e0f7f8 !important;
+    color: var(--admin-accent) !important;
+}
+
+body.admin-dashboard .action-btn.delete {
+    background: var(--admin-primary-soft) !important;
+    color: var(--admin-primary-hover) !important;
+}
+
+body.admin-dashboard .admin-count {
+    background: var(--admin-primary-soft) !important;
+    border-color: #ffd4c8 !important;
+    color: var(--admin-primary-hover) !important;
+}
+
+body.admin-dashboard .accordion-trigger {
+    color: var(--admin-text) !important;
+}
+
+body.admin-dashboard .accordion-trigger:hover {
+    background: var(--admin-surface-soft) !important;
+}
+
 html.theme-light body.home-dashboard {
     --primary: #ff704f;
     --primary-hover: #f35d3d;

@@ -5561,6 +5561,27 @@ body,
     background: var(--theme-primary-hover) !important;
 }
 
+html.theme-light .auth-visual h1 {
+    color: var(--theme-fg-strong) !important;
+    text-shadow: none !important;
+}
+
+html.theme-light .auth-visual p {
+    color: var(--theme-text-soft) !important;
+}
+
+html.theme-light .auth-visual .auth-pill {
+    background: var(--theme-primary-soft) !important;
+    border-color: var(--theme-border-strong) !important;
+    color: var(--theme-primary-contrast) !important;
+}
+
+html.theme-light .auth-preview-card {
+    background: var(--theme-card) !important;
+    border-color: var(--theme-border) !important;
+    box-shadow: var(--theme-shadow-soft) !important;
+}
+
 .profile-page,
 .menu-page,
 .menu-detail-page,

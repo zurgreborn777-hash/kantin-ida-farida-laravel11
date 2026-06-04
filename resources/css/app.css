@@ -4618,6 +4618,31 @@ html.reduce-motion .home-marquee div {
     transform: none !important;
 }
 
+/* Final overlay guard: image captions must stay readable over dark photo overlay in every theme. */
+html body.home-dashboard .menu-detail-media .menu-detail-overlay {
+    background: rgba(10, 10, 10, 0.9) !important;
+    border-color: rgba(255, 247, 239, 0.18) !important;
+    color: #fff7ef !important;
+}
+
+html body.home-dashboard .menu-detail-media .menu-detail-overlay h2 {
+    color: #fff7ef !important;
+    opacity: 1 !important;
+    text-shadow: 0 3px 18px rgba(0, 0, 0, 0.72) !important;
+}
+
+html body.home-dashboard .menu-detail-media .menu-detail-overlay strong {
+    color: #ffb09d !important;
+    opacity: 1 !important;
+    text-shadow: 0 3px 16px rgba(0, 0, 0, 0.72) !important;
+}
+
+html body.home-dashboard .menu-detail-media .menu-detail-overlay span {
+    background: #ffd6c8 !important;
+    border-color: rgba(255, 247, 239, 0.32) !important;
+    color: #2a1009 !important;
+}
+
 /* Final guard for menu detail image overlay contrast in light mode. */
 html.theme-light body.home-dashboard .menu-detail-media .menu-detail-overlay,
 body.home-dashboard .menu-detail-media .menu-detail-overlay {
@@ -5657,7 +5682,6 @@ html.theme-light .auth-preview-card {
 .menu-hero h1,
 .menu-title-row h2,
 .menu-detail-copy h1,
-.menu-detail-overlay h2,
 .menu-detail-info h3,
 .cart-hero h1,
 .cart-panel-head h2,
@@ -5716,7 +5740,6 @@ html.theme-light .auth-preview-card {
 .auth-pill,
 .artisan-pill,
 .menu-detail-meta span,
-.menu-detail-overlay span,
 .cart-hero span,
 .cart-panel-head span,
 .orders-hero span,
@@ -5734,7 +5757,6 @@ html.theme-light .auth-preview-card {
 .auth-field label,
 .cart-field label,
 .menu-detail-info dd,
-.menu-detail-overlay strong,
 .cart-price-line strong,
 .cart-total-line span,
 .cart-total-line strong,
@@ -6167,4 +6189,29 @@ html.reduce-motion .chef-scroll,
 html.reduce-motion .home-marquee div {
     animation: none !important;
     transform: none !important;
+}
+
+/* Final overlay guard: image captions must stay readable over dark photo overlay in every theme. */
+html body.home-dashboard .menu-detail-media .menu-detail-overlay {
+    background: rgba(10, 10, 10, 0.9) !important;
+    border-color: rgba(255, 247, 239, 0.18) !important;
+    color: #fff7ef !important;
+}
+
+html body.home-dashboard .menu-detail-media .menu-detail-overlay h2 {
+    color: #fff7ef !important;
+    opacity: 1 !important;
+    text-shadow: 0 3px 18px rgba(0, 0, 0, 0.72) !important;
+}
+
+html body.home-dashboard .menu-detail-media .menu-detail-overlay strong {
+    color: #ffb09d !important;
+    opacity: 1 !important;
+    text-shadow: 0 3px 16px rgba(0, 0, 0, 0.72) !important;
+}
+
+html body.home-dashboard .menu-detail-media .menu-detail-overlay span {
+    background: #ffd6c8 !important;
+    border-color: rgba(255, 247, 239, 0.32) !important;
+    color: #2a1009 !important;
 }

@@ -4618,6 +4618,35 @@ html.reduce-motion .home-marquee div {
     transform: none !important;
 }
 
+/* Final guard for menu detail image overlay contrast in light mode. */
+html.theme-light body.home-dashboard .menu-detail-media .menu-detail-overlay,
+body.home-dashboard .menu-detail-media .menu-detail-overlay {
+    background: rgba(10, 10, 10, 0.88) !important;
+    border-color: rgba(255, 247, 239, 0.18) !important;
+    color: #fff7ef !important;
+}
+
+html.theme-light body.home-dashboard .menu-detail-media .menu-detail-overlay h2,
+body.home-dashboard .menu-detail-media .menu-detail-overlay h2 {
+    color: #fff7ef !important;
+    opacity: 1 !important;
+    text-shadow: 0 3px 18px rgba(0, 0, 0, 0.72) !important;
+}
+
+html.theme-light body.home-dashboard .menu-detail-media .menu-detail-overlay strong,
+body.home-dashboard .menu-detail-media .menu-detail-overlay strong {
+    color: #ffb09d !important;
+    opacity: 1 !important;
+    text-shadow: 0 3px 16px rgba(0, 0, 0, 0.72) !important;
+}
+
+html.theme-light body.home-dashboard .menu-detail-media .menu-detail-overlay span,
+body.home-dashboard .menu-detail-media .menu-detail-overlay span {
+    background: #ffd6c8 !important;
+    border-color: rgba(255, 247, 239, 0.32) !important;
+    color: #2a1009 !important;
+}
+
 /* Admin UI cleanup: keep the back office readable and visually separate from storefront themes. */
 body.admin-dashboard {
     --admin-bg: #f4f6fb;

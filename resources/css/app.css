@@ -6063,6 +6063,33 @@ html.theme-light .kitchen-panel {
     filter: none !important;
 }
 
+.menu-detail-media::after {
+    background: linear-gradient(180deg, transparent 38%, rgba(0, 0, 0, 0.86) 100%) !important;
+}
+
+.menu-detail-overlay {
+    background: rgba(14, 14, 14, 0.84) !important;
+    border-color: rgba(255, 247, 239, 0.16) !important;
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.34) !important;
+    color: #fff7ef !important;
+}
+
+.menu-detail-overlay h2 {
+    color: #fff7ef !important;
+    text-shadow: 0 2px 16px rgba(0, 0, 0, 0.55);
+}
+
+.menu-detail-overlay strong {
+    color: #ffb09d !important;
+    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.48);
+}
+
+.menu-detail-overlay span {
+    background: #ffd6c8 !important;
+    border-color: rgba(255, 247, 239, 0.3) !important;
+    color: #2a1009 !important;
+}
+
 .orders-map-card iframe {
     filter: grayscale(0.35) contrast(1.02) brightness(0.95);
 }

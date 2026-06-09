@@ -36,6 +36,7 @@ Route::middleware('auth')->group(function () {
     
     Route::get('/cart', [HomeController::class, 'cart'])->name('cart');
     Route::post('/order', [HomeController::class, 'order'])->name('order.add');
+    Route::post('/cart/delivery-preview', [HomeController::class, 'deliveryPreview'])->name('cart.delivery-preview');
     Route::post('/cart/update/{id}', [HomeController::class, 'updateCartItem'])->name('cart.update');
     Route::delete('/cart/remove/{id}', [HomeController::class, 'removeCartItem'])->name('cart.remove');
     Route::post('/checkout', [HomeController::class, 'checkout'])->name('order.checkout');

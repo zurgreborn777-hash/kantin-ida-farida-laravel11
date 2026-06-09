@@ -26,6 +26,11 @@
                     <td>{{ $user->name }}</td>
                     <td>{{ $user->email }}</td>
                     <td>
+                        <span style="padding: 0.2rem 0.5rem; border-radius: var(--radius-full); font-size: 0.8rem; background: {{ $user->is_admin ? 'var(--theme-primary-soft)' : 'var(--theme-muted)' }}; color: {{ $user->is_admin ? 'var(--theme-primary-contrast)' : 'var(--theme-text-muted)' }};">
+                            {{ $user->is_admin ? 'Admin' : 'Pengguna' }}
+                        </span>
+                    </td>
+                    <td style="display:flex; gap:0.5rem; align-items:center;">
                         <form action="{{ route('admin.users.update', $user->id) }}" method="POST" style="display:inline-flex; align-items:center; gap:0.5rem;">
                             @csrf
                             <label style="display:inline-flex; align-items:center; gap:0.2rem;">
@@ -34,13 +39,6 @@
                             
                             <button type="submit" class="action-btn edit"><i class="fa-solid fa-save"></i></button>
                         </form>
-                    </td>
-                    <td>
-                        <span style="padding: 0.2rem 0.5rem; border-radius: var(--radius-full); font-size: 0.8rem; background: {{ $user->is_admin ? 'var(--theme-primary-soft)' : 'var(--theme-muted)' }}; color: {{ $user->is_admin ? 'var(--theme-primary-contrast)' : 'var(--theme-text-muted)' }};">
-                            {{ $user->is_admin ? 'Admin' : 'Pengguna' }}
-                        </span>
-                    </td>
-                    <td>
                         @if(auth()->id() !== $user->id)
                         <form action="{{ route('admin.users.delete', $user->id) }}" method="POST" style="display:inline;">
                             @csrf

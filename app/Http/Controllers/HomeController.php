@@ -7,6 +7,7 @@ use App\Models\Menu;
 use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 
 class HomeController extends Controller
 {
@@ -123,6 +124,71 @@ class HomeController extends Controller
         return view('cart', compact('order'));
     }
 
+    public function deliveryPreview(Request $request)
+    {
+        $request->validate([
+            'lat' => 'required|numeric|between:-90,90',
+            'lng' => 'required|numeric|between:-180,180',
+        ]);
+
+        $lat = (float) $request->lat;
+        $lng = (float) $request->lng;
+        $maxDeliveryKm = (float) config('canteen.max_delivery_km');
+        $address = null;
+        $geocodeError = null;
+
+        try {
+            $geoResponse = Http::timeout(5)
+                ->withHeaders([
+                    'User-Agent' => config('app.name', 'Laravel') . ' checkout delivery preview',
+                    'Accept' => 'application/json',
+                ])
+                ->get('https://nominatim.openstreetmap.org/reverse', [
+                    'format' => 'json',
+                    'lat' => $lat,
+                    'lon' => $lng,
+                    'zoom' => 18,
+                    'addressdetails' => 1,
+                ]);
+
+            if ($geoResponse->successful()) {
+                $address = $geoResponse->json('display_name');
+            }
+        } catch (\Throwable $e) {
+            $geocodeError = $e->getMessage();
+        }
+
+        if (!$address) {
+            $geocodeError = $geocodeError ?: 'Alamat tidak ditemukan untuk titik ini.';
+        }
+
+        $route = $this->getDrivingRoute($lat, $lng);
+        $distanceKm = $route ? $route['distance_km'] : null;
+        $distanceRounded = $distanceKm !== null ? round($distanceKm, 2) : 0;
+        $inRange = $distanceKm !== null && $distanceKm <= $maxDeliveryKm;
+
+        $message = !$route
+            ? 'Gagal menghitung rute jalan raya. Coba geser pin ke area jalan terdekat.'
+            : ($inRange
+                ? "Lokasi masuk jangkauan {$maxDeliveryKm} KM"
+                : "Lokasi di luar jangkauan {$maxDeliveryKm} KM");
+
+        if ($route && $inRange && !$address) {
+            $message = 'Gagal membuat alamat otomatis. Geser pin lagi atau isi alamat manual.';
+        }
+
+        return response()->json([
+            'success' => true,
+            'address' => $address,
+            'distance' => $distanceRounded,
+            'ongkir' => $inRange ? $this->calculateShippingFee($distanceKm) : 0,
+            'in_range' => $inRange,
+            'route_geometry' => $route ? $route['geometry'] : null,
+            'message' => $message,
+            'geocode_error' => $geocodeError,
+        ]);
+    }
+
     public function updateCartItem(Request $request, $id)
     {
         $request->validate(['action' => 'required|in:increase,decrease']);
@@ -210,18 +276,21 @@ class HomeController extends Controller
     {
         $request->validate([
             'location' => 'required|string|max:1000',
-            'ongkir' => 'nullable|integer',
+            'ongkir' => 'required|integer|min:1',
             'distance' => 'nullable|numeric',
             'lat' => 'required|numeric',
             'lng' => 'required|numeric',
         ]);
 
-        $distanceKm = $this->calculateDistanceKm(
-            config('canteen.latitude'),
-            config('canteen.longitude'),
-            (float) $request->lat,
-            (float) $request->lng
-        );
+        $route = $this->getDrivingRoute((float) $request->lat, (float) $request->lng);
+        if (!$route) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghitung rute jalan raya. Coba geser pin ke area jalan terdekat.',
+            ], 422);
+        }
+
+        $distanceKm = $route['distance_km'];
 
         if ($distanceKm > config('canteen.max_delivery_km')) {
             return response()->json([
@@ -244,12 +313,19 @@ class HomeController extends Controller
                 : redirect()->back()->withErrors(['cart' => 'Keranjang kosong!']);
         }
 
+        if ($configError = $this->duitkuConfigError()) {
+            return response()->json([
+                'success' => false,
+                'message' => $configError,
+            ], 500);
+        }
+
         $basePrice = 0;
         foreach ($order->items as $item) {
             $basePrice += ($item->price * $item->quantity);
         }
 
-        $ongkir = (int)$request->input('ongkir', 0);
+        $ongkir = $this->calculateShippingFee($distanceKm);
 
         $order->location = $request->location;
         $order->shipping_fee = $ongkir;
@@ -435,10 +511,57 @@ class HomeController extends Controller
         return $earthRadiusKm * 2 * atan2(sqrt($a), sqrt(1 - $a));
     }
 
+    private function getDrivingRoute(float $toLat, float $toLng): ?array
+    {
+        try {
+            $fromLat = (float) config('canteen.latitude');
+            $fromLng = (float) config('canteen.longitude');
+            $response = Http::timeout(6)
+                ->retry(1, 300)
+                ->acceptJson()
+                ->get("https://router.project-osrm.org/route/v1/driving/{$fromLng},{$fromLat};{$toLng},{$toLat}", [
+                    'overview' => 'full',
+                    'geometries' => 'geojson',
+                    'alternatives' => 'false',
+                    'steps' => 'false',
+                ]);
+
+            if (!$response->successful()) {
+                return null;
+            }
+
+            $route = $response->json('routes.0');
+            if (!$route || !isset($route['distance'], $route['geometry'])) {
+                return null;
+            }
+
+            return [
+                'distance_km' => ((float) $route['distance']) / 1000,
+                'geometry' => $route['geometry'],
+            ];
+        } catch (\Throwable $e) {
+            return null;
+        }
+    }
+
+    private function calculateShippingFee(float $distanceKm): int
+    {
+        return (int) ceil($distanceKm * 2) * 5000;
+    }
+
     private function duitkuEndpoint(): string
     {
         return config('duitku.env') === 'production'
             ? config('duitku.production_endpoint')
             : config('duitku.sandbox_endpoint');
+    }
+
+    private function duitkuConfigError(): ?string
+    {
+        if (blank(config('duitku.merchant_code')) || blank(config('duitku.api_key'))) {
+            return 'Konfigurasi Duitku belum lengkap. Isi DUITKU_MERCHANT_CODE dan DUITKU_API_KEY di file .env, lalu jalankan php artisan config:clear.';
+        }
+
+        return null;
     }
 }

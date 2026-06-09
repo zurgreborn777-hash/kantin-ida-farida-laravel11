@@ -4618,60 +4618,6 @@ html.reduce-motion .home-marquee div {
     transform: none !important;
 }
 
-/* Final overlay guard: image captions must stay readable over dark photo overlay in every theme. */
-html body.home-dashboard .menu-detail-media .menu-detail-overlay {
-    background: rgba(10, 10, 10, 0.9) !important;
-    border-color: rgba(255, 247, 239, 0.18) !important;
-    color: #fff7ef !important;
-}
-
-html body.home-dashboard .menu-detail-media .menu-detail-overlay h2 {
-    color: #fff7ef !important;
-    opacity: 1 !important;
-    text-shadow: 0 3px 18px rgba(0, 0, 0, 0.72) !important;
-}
-
-html body.home-dashboard .menu-detail-media .menu-detail-overlay strong {
-    color: #ffb09d !important;
-    opacity: 1 !important;
-    text-shadow: 0 3px 16px rgba(0, 0, 0, 0.72) !important;
-}
-
-html body.home-dashboard .menu-detail-media .menu-detail-overlay span {
-    background: #ffd6c8 !important;
-    border-color: rgba(255, 247, 239, 0.32) !important;
-    color: #2a1009 !important;
-}
-
-/* Final guard for menu detail image overlay contrast in light mode. */
-html.theme-light body.home-dashboard .menu-detail-media .menu-detail-overlay,
-body.home-dashboard .menu-detail-media .menu-detail-overlay {
-    background: rgba(10, 10, 10, 0.88) !important;
-    border-color: rgba(255, 247, 239, 0.18) !important;
-    color: #fff7ef !important;
-}
-
-html.theme-light body.home-dashboard .menu-detail-media .menu-detail-overlay h2,
-body.home-dashboard .menu-detail-media .menu-detail-overlay h2 {
-    color: #fff7ef !important;
-    opacity: 1 !important;
-    text-shadow: 0 3px 18px rgba(0, 0, 0, 0.72) !important;
-}
-
-html.theme-light body.home-dashboard .menu-detail-media .menu-detail-overlay strong,
-body.home-dashboard .menu-detail-media .menu-detail-overlay strong {
-    color: #ffb09d !important;
-    opacity: 1 !important;
-    text-shadow: 0 3px 16px rgba(0, 0, 0, 0.72) !important;
-}
-
-html.theme-light body.home-dashboard .menu-detail-media .menu-detail-overlay span,
-body.home-dashboard .menu-detail-media .menu-detail-overlay span {
-    background: #ffd6c8 !important;
-    border-color: rgba(255, 247, 239, 0.32) !important;
-    color: #2a1009 !important;
-}
-
 /* Admin UI cleanup: keep the back office readable and visually separate from storefront themes. */
 body.admin-dashboard {
     --admin-bg: #f4f6fb;
@@ -5116,6 +5062,8 @@ html.theme-light .orders-total-box small {
     color: #2b1711;
 }
 
+html.theme-light .auth-visual h1,
+html.theme-light .auth-visual p,
 html.theme-light .auth-heading h2,
 html.theme-light .auth-preview-card strong,
 html.theme-light .auth-input-wrap input,
@@ -5615,27 +5563,6 @@ body,
     background: var(--theme-primary-hover) !important;
 }
 
-html.theme-light .auth-visual h1 {
-    color: var(--theme-fg-strong) !important;
-    text-shadow: none !important;
-}
-
-html.theme-light .auth-visual p {
-    color: var(--theme-text-soft) !important;
-}
-
-html.theme-light .auth-visual .auth-pill {
-    background: var(--theme-primary-soft) !important;
-    border-color: var(--theme-border-strong) !important;
-    color: var(--theme-primary-contrast) !important;
-}
-
-html.theme-light .auth-preview-card {
-    background: var(--theme-card) !important;
-    border-color: var(--theme-border) !important;
-    box-shadow: var(--theme-shadow-soft) !important;
-}
-
 .profile-page,
 .menu-page,
 .menu-detail-page,
@@ -5682,6 +5609,7 @@ html.theme-light .auth-preview-card {
 .menu-hero h1,
 .menu-title-row h2,
 .menu-detail-copy h1,
+.menu-detail-overlay h2,
 .menu-detail-info h3,
 .cart-hero h1,
 .cart-panel-head h2,
@@ -5740,6 +5668,7 @@ html.theme-light .auth-preview-card {
 .auth-pill,
 .artisan-pill,
 .menu-detail-meta span,
+.menu-detail-overlay span,
 .cart-hero span,
 .cart-panel-head span,
 .orders-hero span,
@@ -5757,6 +5686,7 @@ html.theme-light .auth-preview-card {
 .auth-field label,
 .cart-field label,
 .menu-detail-info dd,
+.menu-detail-overlay strong,
 .cart-price-line strong,
 .cart-total-line span,
 .cart-total-line strong,
@@ -6114,33 +6044,6 @@ html.theme-light .kitchen-panel {
     filter: none !important;
 }
 
-.menu-detail-media::after {
-    background: linear-gradient(180deg, transparent 38%, rgba(0, 0, 0, 0.86) 100%) !important;
-}
-
-.menu-detail-overlay {
-    background: rgba(14, 14, 14, 0.84) !important;
-    border-color: rgba(255, 247, 239, 0.16) !important;
-    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.34) !important;
-    color: #fff7ef !important;
-}
-
-.menu-detail-overlay h2 {
-    color: #fff7ef !important;
-    text-shadow: 0 2px 16px rgba(0, 0, 0, 0.55);
-}
-
-.menu-detail-overlay strong {
-    color: #ffb09d !important;
-    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.48);
-}
-
-.menu-detail-overlay span {
-    background: #ffd6c8 !important;
-    border-color: rgba(255, 247, 239, 0.3) !important;
-    color: #2a1009 !important;
-}
-
 .orders-map-card iframe {
     filter: grayscale(0.35) contrast(1.02) brightness(0.95);
 }
@@ -6189,29 +6092,4 @@ html.reduce-motion .chef-scroll,
 html.reduce-motion .home-marquee div {
     animation: none !important;
     transform: none !important;
-}
-
-/* Final overlay guard: image captions must stay readable over dark photo overlay in every theme. */
-html body.home-dashboard .menu-detail-media .menu-detail-overlay {
-    background: rgba(10, 10, 10, 0.9) !important;
-    border-color: rgba(255, 247, 239, 0.18) !important;
-    color: #fff7ef !important;
-}
-
-html body.home-dashboard .menu-detail-media .menu-detail-overlay h2 {
-    color: #fff7ef !important;
-    opacity: 1 !important;
-    text-shadow: 0 3px 18px rgba(0, 0, 0, 0.72) !important;
-}
-
-html body.home-dashboard .menu-detail-media .menu-detail-overlay strong {
-    color: #ffb09d !important;
-    opacity: 1 !important;
-    text-shadow: 0 3px 16px rgba(0, 0, 0, 0.72) !important;
-}
-
-html body.home-dashboard .menu-detail-media .menu-detail-overlay span {
-    background: #ffd6c8 !important;
-    border-color: rgba(255, 247, 239, 0.32) !important;
-    color: #2a1009 !important;
 }

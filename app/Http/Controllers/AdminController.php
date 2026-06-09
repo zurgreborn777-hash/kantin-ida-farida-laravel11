@@ -136,6 +136,13 @@ class AdminController extends Controller
             'customerName' => 'required|string',
         ]);
 
+        if ($configError = $this->duitkuConfigError()) {
+            return response()->json([
+                'success' => false,
+                'message' => $configError,
+            ], 500);
+        }
+
         $order = Order::create([
             'user_id' => \Illuminate\Support\Facades\Auth::id(),
             'status' => 'pending',
@@ -236,5 +243,14 @@ class AdminController extends Controller
         } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()]);
         }
+    }
+
+    private function duitkuConfigError(): ?string
+    {
+        if (blank(config('duitku.merchant_code')) || blank(config('duitku.api_key'))) {
+            return 'Konfigurasi Duitku belum lengkap. Isi DUITKU_MERCHANT_CODE dan DUITKU_API_KEY di file .env, lalu jalankan php artisan config:clear.';
+        }
+
+        return null;
     }
 }

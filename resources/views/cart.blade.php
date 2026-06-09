@@ -43,15 +43,32 @@
             distance: 0,
             ongkir: 0,
             locationInRange: true,
+            isCalculatingShipping: false,
+            shippingCalculated: false,
+            locationError: '',
+            lastAutoLocation: '',
             distanceMessage: 'Pilih lokasi pengiriman.',
+            map: null,
+            buyerMarker: null,
+            routeLine: null,
+            routeGeometry: null,
+            deliveryRequestId: 0,
+            get hasValidShipping() {
+                return this.shippingCalculated
+                    && !this.isCalculatingShipping
+                    && this.locationInRange
+                    && this.buyerCoords
+                    && this.ongkir > 0
+                    && this.location.trim().length > 0;
+            },
             
             initMap() {
                 // Initialize map centered at canteen coordinates
-                const map = L.map('map').setView(this.canteenCoords, 14);
+                this.map = L.map('map').setView(this.canteenCoords, 14);
                 
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     attribution: '&copy; OpenStreetMap contributors'
-                }).addTo(map);
+                }).addTo(this.map);
 
                 // Add Red Marker for Canteen
                 L.marker(this.canteenCoords, {
@@ -63,13 +80,13 @@
                         popupAnchor: [1, -34],
                         shadowSize: [41, 41]
                     })
-                }).addTo(map).bindPopup('<b>Kantin Ibu Ida</b>').openPopup();
+                }).addTo(this.map).bindPopup('<b>Kantin Ibu Ida</b>').openPopup();
 
                 // Add Draggable Blue Marker for Buyer
                 const defaultBuyer = [this.canteenCoords[0] - 0.005, this.canteenCoords[1] + 0.005];
                 this.buyerCoords = defaultBuyer;
                 
-                const buyerMarker = L.marker(defaultBuyer, {
+                this.buyerMarker = L.marker(defaultBuyer, {
                     draggable: true,
                     icon: L.icon({
                         iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
@@ -79,70 +96,127 @@
                         popupAnchor: [1, -34],
                         shadowSize: [41, 41]
                     })
-                }).addTo(map);
+                }).addTo(this.map);
 
-                let routeLine = null;
-
-                // Function to fetch route from OSRM and reverse geocode using Nominatim
-                const getRouteAndAddress = async (lat, lng) => {
-                    try {
-                        // 1. Fetch Driving Route and Distance from OSRM API
-                        const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${this.canteenCoords[1]},${this.canteenCoords[0]};${lng},${lat}?overview=full&geometries=geojson`;
-                        const response = await fetch(osrmUrl);
-                        const data = await response.json();
-                        
-                        if (data.routes && data.routes.length > 0) {
-                            const distanceMeters = data.routes[0].distance;
-                            this.distance = (distanceMeters / 1000).toFixed(2);
-                            
-                            // Shipping Fee: Rp 5.000 / 500 meters (0.5 Km)
-                            this.ongkir = Math.ceil(this.distance * 2) * 5000;
-                            this.locationInRange = parseFloat(this.distance) <= this.maxDeliveryKm;
-                            this.distanceMessage = this.locationInRange
-                                ? `Lokasi masuk jangkauan ${this.maxDeliveryKm} KM`
-                                : 'Lokasi di luar jangkauan 2 KM';
-                            
-                            // Draw Route Polyline
-                            if (routeLine) map.removeLayer(routeLine);
-                            routeLine = L.geoJSON(data.routes[0].geometry, {
-                                style: { color: getComputedStyle(document.documentElement).getPropertyValue('--theme-primary').trim() || 'var(--primary)', weight: 5, opacity: 0.7 }
-                            }).addTo(map);
-
-                            // Fit bounds to show both markers
-                            const bounds = L.latLngBounds([this.canteenCoords, [lat, lng]]);
-                            map.fitBounds(bounds, { padding: [40, 40] });
-                        }
-
-                        // 2. Reverse Geocode coordinate using OpenStreetMap Nominatim
-                        const geocodeUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18`;
-                        const geoResponse = await fetch(geocodeUrl);
-                        const geoData = await geoResponse.json();
-                        if (geoData && geoData.display_name) {
-                            this.location = geoData.display_name;
-                        } else {
-                            this.location = `Koordinat: ${lat}, ${lng}`;
-                        }
-                    } catch (err) {
-                        console.error('Routing / Geocoding Error:', err);
-                    }
-                };
+                setTimeout(() => this.map.invalidateSize(), 100);
 
                 // Initial calculation
-                getRouteAndAddress(defaultBuyer[0], defaultBuyer[1]);
+                this.updateDeliveryLocation(defaultBuyer[0], defaultBuyer[1], true);
 
                 // Update on marker drag
-                buyerMarker.on('dragend', (e) => {
+                this.buyerMarker.on('dragend', (e) => {
                     const pos = e.target.getLatLng();
-                    this.buyerCoords = [pos.lat, pos.lng];
-                    getRouteAndAddress(pos.lat, pos.lng);
+                    const lat = Number(pos.lat);
+                    const lng = Number(pos.lng);
+                    this.updateDeliveryLocation(lat, lng);
                 });
 
                 // Update on map click
-                map.on('click', (e) => {
-                    buyerMarker.setLatLng(e.latlng);
-                    this.buyerCoords = [e.latlng.lat, e.latlng.lng];
-                    getRouteAndAddress(e.latlng.lat, e.latlng.lng);
+                this.map.on('click', (e) => {
+                    const lat = Number(e.latlng.lat);
+                    const lng = Number(e.latlng.lng);
+                    this.buyerMarker.setLatLng([lat, lng]);
+                    this.updateDeliveryLocation(lat, lng);
                 });
+            },
+            async updateDeliveryLocation(lat, lng, shouldFitMap = false) {
+                if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+                    this.locationInRange = false;
+                    this.shippingCalculated = false;
+                    this.ongkir = 0;
+                    this.distance = 0;
+                    this.locationError = 'Koordinat lokasi tidak valid.';
+                    this.distanceMessage = this.locationError;
+                    return;
+                }
+
+                const requestId = ++this.deliveryRequestId;
+                this.buyerCoords = [lat, lng];
+                this.isCalculatingShipping = true;
+                this.shippingCalculated = false;
+                this.locationError = '';
+                this.distanceMessage = 'Menghitung ongkos kirim...';
+                if (this.location && this.location === this.lastAutoLocation) {
+                    this.location = '';
+                    this.lastAutoLocation = '';
+                }
+
+                try {
+                    const response = await fetch(`{{ route('cart.delivery-preview') }}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({ lat, lng })
+                    });
+                    const data = await response.json();
+
+                    if (!response.ok || !data.success) {
+                        throw new Error(data.message || 'Gagal menghitung lokasi pengiriman.');
+                    }
+                    if (requestId !== this.deliveryRequestId) return;
+
+                    this.distance = Number(data.distance || 0).toFixed(2);
+                    this.locationInRange = Boolean(data.in_range);
+                    this.ongkir = this.locationInRange ? parseInt(data.ongkir || 0, 10) : 0;
+                    this.routeGeometry = data.route_geometry || null;
+                    this.distanceMessage = data.message || (
+                        this.locationInRange
+                            ? `Lokasi masuk jangkauan ${this.maxDeliveryKm} KM`
+                            : `Lokasi di luar jangkauan ${this.maxDeliveryKm} KM`
+                    );
+
+                    if (data.address) {
+                        this.location = data.address;
+                        this.lastAutoLocation = data.address;
+                    } else {
+                        this.locationError = 'Gagal membuat alamat otomatis. Geser pin lagi atau isi alamat manual.';
+                        this.distanceMessage = this.locationError;
+                    }
+
+                    this.shippingCalculated = this.locationInRange && this.ongkir > 0;
+                    this.drawDeliveryRoute(lat, lng, shouldFitMap);
+                } catch (err) {
+                    if (requestId !== this.deliveryRequestId) return;
+                    console.error('Delivery preview error:', err);
+                    this.locationInRange = false;
+                    this.shippingCalculated = false;
+                    this.ongkir = 0;
+                    this.distance = 0;
+                    this.routeGeometry = null;
+                    this.locationError = err.message || 'Gagal menghitung lokasi pengiriman. Coba geser pin lagi.';
+                    this.distanceMessage = this.locationError;
+                    if (this.routeLine) {
+                        this.map.removeLayer(this.routeLine);
+                        this.routeLine = null;
+                    }
+                } finally {
+                    if (requestId === this.deliveryRequestId) {
+                        this.isCalculatingShipping = false;
+                    }
+                }
+            },
+            drawDeliveryRoute(lat, lng, shouldFitMap = false) {
+                if (!this.map) return;
+                if (this.routeLine) this.map.removeLayer(this.routeLine);
+
+                const routeStyle = {
+                    color: getComputedStyle(document.documentElement).getPropertyValue('--theme-primary').trim() || 'var(--primary)',
+                    weight: 5,
+                    opacity: 0.7
+                };
+
+                if (!this.routeGeometry) return;
+
+                this.routeLine = L.geoJSON(this.routeGeometry, { style: routeStyle }).addTo(this.map);
+                this.routeLine.bringToFront();
+
+                if (shouldFitMap) {
+                    const bounds = this.routeLine.getBounds();
+                    this.map.fitBounds(bounds, { padding: [40, 40], animate: false });
+                }
             },
             
             async updateQuantity(itemId, action) {
@@ -190,12 +264,24 @@
             },
             isProcessing: false,
             async checkout(paymentMethod) {
+                if (this.isCalculatingShipping) {
+                    alert('Ongkos kirim masih dihitung. Mohon tunggu sebentar.');
+                    return;
+                }
+                if (!this.buyerCoords) {
+                    alert('Mohon pilih lokasi pengiriman di peta!');
+                    return;
+                }
                 if (!this.location.trim()) {
                     alert('Mohon masukkan lokasi pengiriman!');
                     return;
                 }
                 if (!this.locationInRange) {
                     alert('Lokasi di luar jangkauan 2 KM');
+                    return;
+                }
+                if (!this.hasValidShipping) {
+                    alert(this.locationError || 'Ongkos kirim belum berhasil dihitung. Coba geser pin lokasi lagi.');
                     return;
                 }
                 this.isProcessing = true;
@@ -281,14 +367,17 @@
 
                 <div class="cart-price-line">
                     <span>Ongkos Kirim</span>
-                    <strong x-show="ongkir > 0">
+                    <strong x-show="hasValidShipping">
                         Rp <span x-text="new Intl.NumberFormat('id-ID').format(ongkir)"></span> 
                         <small>
                             (<span x-text="distance"></span> Km)
                         </small>
                     </strong>
-                    <strong x-show="ongkir === 0">
+                    <strong x-show="isCalculatingShipping">
                         Menghitung...
+                    </strong>
+                    <strong x-show="!isCalculatingShipping && !hasValidShipping">
+                        Belum tersedia
                     </strong>
                 </div>
 
@@ -338,7 +427,7 @@
                 </p>
 
                 <div>
-                    <button @click="checkout(paymentMethod)" class="cart-checkout-btn" x-bind:disabled="isProcessing || !locationInRange">
+                    <button @click="checkout(paymentMethod)" class="cart-checkout-btn" x-bind:disabled="isProcessing || isCalculatingShipping || !hasValidShipping">
                         <span x-show="!isProcessing"><i class="fa-solid fa-lock"></i> Bayar Sekarang</span>
                         <span x-show="isProcessing" style="display: none;"><i class="fa-solid fa-spinner fa-spin"></i> Memproses...</span>
                     </button>

@@ -2617,13 +2617,17 @@ tbody tr:hover {
     background: rgba(255, 112, 79, 0.13);
     border: 1px solid rgba(255, 112, 79, 0.35);
     border-radius: 8px;
-    color: #ffc7b8;
+    color: #ffffff;
     display: flex;
     font-size: 0.78rem;
     font-weight: 800;
     gap: 0.65rem;
     margin-bottom: 1rem;
     padding: 0.75rem 0.85rem;
+}
+
+html.theme-light .auth-error {
+    color: #000000;
 }
 
 .auth-form {

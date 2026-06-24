@@ -44,8 +44,12 @@ COPY nginx.conf /etc/nginx/sites-enabled/default
 # Copy Supervisor configuration
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
+# Copy and set startup script
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
 # Expose port
 EXPOSE 80
 
-# Start supervisor
-CMD ["supervisord", "-n", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+# Run startup script (migrations + services)
+CMD ["/start.sh"]

@@ -25,11 +25,11 @@ WORKDIR /var/www/html
 # Copy application files
 COPY . .
 
-# Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader --no-interaction --no-progress
+# Install PHP dependencies (--no-scripts to avoid DB connection during build)
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-progress --no-scripts
 
-# Generate optimized autoload files
-RUN composer dump-autoload --optimize
+# Generate optimized autoload files (no scripts, no DB needed)
+RUN composer dump-autoload --optimize --no-scripts
 
 # Create storage directories and set permissions
 RUN mkdir -p storage/framework/{sessions,views,cache} \

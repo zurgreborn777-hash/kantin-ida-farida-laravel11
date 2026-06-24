@@ -19,6 +19,10 @@ chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 echo "==> Running database migrations..."
 php artisan migrate --force
 
+# Seed database (admin user + sample data)
+echo "==> Seeding database..."
+php artisan db:seed --force
+
 # Create storage symlink
 echo "==> Creating storage symlink..."
 php artisan storage:link --force || true

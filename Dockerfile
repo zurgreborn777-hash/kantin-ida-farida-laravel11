@@ -1,6 +1,6 @@
 FROM php:8.2-fpm
 
-# Install system dependencies
+# Install system dependencies + Node.js
 RUN apt-get update && apt-get install -y \
     nginx \
     supervisor \
@@ -14,7 +14,9 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     curl \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo pdo_mysql mbstring exif pcntl bcmath zip
+    && docker-php-ext-install gd pdo pdo_mysql mbstring exif pcntl bcmath zip \
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -30,6 +32,9 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction --no-progre
 
 # Generate optimized autoload files (no scripts, no DB needed)
 RUN composer dump-autoload --optimize --no-scripts
+
+# Install Node dependencies and build frontend assets
+RUN npm ci && npm run build && rm -rf node_modules
 
 # Create storage directories and set permissions
 RUN mkdir -p storage/framework/{sessions,views,cache} \

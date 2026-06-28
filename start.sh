@@ -17,6 +17,55 @@ chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Run migrations
 echo "==> Running database migrations..."
+php artisan migrate --force || {
+    echo "!! Migration failed, continuing anyway..."
+}
+
+# Seed database (admin user + sample data)
+echo "==> Seeding database..."
+php artisan db:seed --force || {
+    echo "!! Seeding failed, continuing anyway..."
+}
+
+# Create storage symlink
+echo "==> Creating storage symlink..."
+php artisan storage:link --force || true
+
+# Clear and cache config for production
+echo "==> Caching configuration..."
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+
+# Set nginx port from Railway's PORT env var (default 8080)
+PORT=${PORT:-8080}
+echo "==> Configuring nginx to listen on port $PORT..."
+sed -i "s/listen 8080/listen $PORT/g" /etc/nginx/sites-enabled/default
+sed -i "s/listen \[::\]:8080/listen [::]:$PORT/g" /etc/nginx/sites-enabled/default
+
+echo "==> Setup complete! Starting services..."
+
+# Start supervisord
+exec supervisord -n -c /etc/supervisor/conf.d/supervisord.conf
+#!/bin/bash
+
+set -e
+
+echo "==> Starting Laravel application setup..."
+
+# Create SQLite database file if not exists
+echo "==> Setting up SQLite database..."
+touch /var/www/html/database/database.sqlite
+chown -R www-data:www-data /var/www/html/database
+chmod -R 775 /var/www/html/database
+
+# Set proper permissions for storage
+echo "==> Setting storage permissions..."
+chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
+# Run migrations
+echo "==> Running database migrations..."
 php artisan migrate --force
 
 # Seed database (admin user + sample data)

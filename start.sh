@@ -50,4 +50,5 @@ sed -i "s/listen \[::\]:8080/listen [::]:$PORT/g" /etc/nginx/sites-enabled/defau
 echo "==> Setup complete! Starting services..."
 
 # Start supervisord
+exec supervisord -n -c /etc/supervisor/conf.d/supervisord.conf
 

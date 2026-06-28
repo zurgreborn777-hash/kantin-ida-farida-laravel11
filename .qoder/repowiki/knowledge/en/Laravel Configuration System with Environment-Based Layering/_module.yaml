@@ -1,0 +1,14 @@
+schema_version: 1
+module_path: configuration_system
+title: Laravel Configuration System with Environment-Based Layering
+scope: []
+source_files:
+    - config/app.php
+    - config/canteen.php
+    - config/duitku.php
+    - config/database.php
+    - config/services.php
+    - .env.example
+    - bootstrap/app.php
+depends_on: []
+related_to: []

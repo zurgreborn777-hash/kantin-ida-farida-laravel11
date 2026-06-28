@@ -1,0 +1,5 @@
+- **Framework**: Built on Laravel 11 with a standard MVC structure. Controllers (`HomeController`, `AdminController`) handle business logic directly without dedicated service layers.
+- **Routing**: Defined in `routes/web.php` using middleware groups for authentication (`auth`) and role-based access (`AdminMiddleware`).
+- **Data Layer**: Uses Eloquent ORM with models (`Order`, `Menu`, `User`) and migrations for schema management. SQLite is used as the default database (`database/kantin.db`).
+- **External Integrations**: Integrates Duitku for payments (configured in `config/duitku.php`) and OSRM/Nominatim for delivery distance calculation and reverse geocoding.
+- **Views**: Server-side rendering using Blade templates located in `resources/views`, organized by feature (admin, auth, customer).

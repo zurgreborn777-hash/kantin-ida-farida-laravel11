@@ -1,0 +1,4 @@
+- **Payment Gateway**: Duitku API v2 for QRIS and virtual account processing.
+- **Geospatial Services**: OpenStreetMap Nominatim for address resolution and OSRM for driving route/distance calculation.
+- **Database**: SQLite (local development/single-file deployment).
+- **Build Tooling**: Vite for asset compilation (JS/CSS).

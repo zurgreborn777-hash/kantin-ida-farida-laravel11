@@ -1,0 +1,4 @@
+- Controllers perform direct database queries and business logic (e.g., stock validation, price recalculation) without delegating to service classes.
+- Delivery-related actions validate coordinates against a configurable maximum radius (`canteen.max_delivery_km`) before processing orders.
+- Payment integration uses MD5 signatures for request verification and callback validation as per Duitku's legacy API requirements.
+- Order status transitions include automatic completion logic for orders marked 'sampai' (arrived) after 24 hours.

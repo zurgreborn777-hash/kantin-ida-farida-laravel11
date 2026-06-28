@@ -1,0 +1,1 @@
+A Laravel-based canteen application handling menu browsing, cart management, delivery logistics, and payment processing via Duitku.

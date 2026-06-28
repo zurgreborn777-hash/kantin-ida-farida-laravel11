@@ -1,0 +1,2 @@
+- **Seeding**: A temporary `/seed-db` route is exposed to trigger `db:seed` and `optimize:clear` via HTTP, providing default admin/user credentials.
+- **Environment**: Requires specific `.env` variables for Duitku (`DUITKU_MERCHANT_CODE`, `DUITKU_API_KEY`) and canteen location (`CANTEEN_LATITUDE`, `CANTEEN_LONGITUDE`).

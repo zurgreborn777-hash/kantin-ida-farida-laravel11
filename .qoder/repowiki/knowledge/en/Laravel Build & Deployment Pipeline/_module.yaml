@@ -1,0 +1,13 @@
+schema_version: 1
+module_path: build_system
+title: Laravel Build & Deployment Pipeline
+scope: []
+source_files:
+    - composer.json
+    - package.json
+    - nixpacks.toml
+    - vite.config.js
+    - phpunit.xml
+    - .env.example
+depends_on: []
+related_to: []

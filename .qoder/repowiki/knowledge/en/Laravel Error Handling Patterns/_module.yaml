@@ -1,0 +1,17 @@
+schema_version: 1
+module_path: error_handling
+title: Laravel Error Handling Patterns
+scope: []
+source_files:
+    - app/Http/Controllers/Controller.php
+    - app/Http/Controllers/HomeController.php
+    - app/Http/Controllers/AdminController.php
+    - app/Http/Controllers/AuthController.php
+    - app/Http/Middleware/AdminMiddleware.php
+    - bootstrap/app.php
+    - config/logging.php
+    - lang/en/validation.php
+    - lang/id/validation.php
+    - routes/web.php
+depends_on: []
+related_to: []

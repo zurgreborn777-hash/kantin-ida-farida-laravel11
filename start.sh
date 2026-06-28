@@ -35,11 +35,9 @@ php artisan db:seed --force || {
 echo "==> Creating storage symlink..."
 php artisan storage:link --force || true
 
-# Clear and cache config for production
-echo "==> Caching configuration..."
-php artisan config:clear
-php artisan route:clear
-php artisan view:clear
+# Cache config, routes, and views for production
+echo "==> Optimizing Laravel..."
+php artisan optimize
 
 # Set nginx port from Railway's PORT env var (default 8080)
 PORT=${PORT:-8080}

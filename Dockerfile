@@ -28,9 +28,8 @@ WORKDIR /var/www/html
 # Copy application files
 COPY . .
 
-# Install PHP dependencies (allow running as root for source fallback)
-ENV COMPOSER_ALLOW_SUPERUSER=1
-RUN composer install --no-dev --optimize-autoloader --no-interaction --no-progress --no-scripts
+# Install PHP dependencies (COMPOSER_ALLOW_SUPERUSER enables source fallback when zip fails)
+RUN COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader --no-interaction --no-progress --no-scripts
 
 # Generate optimized autoload files (no scripts, no DB needed)
 RUN composer dump-autoload --optimize --no-scripts

@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="https://down-id.img.susercontent.com/file/id-11134207-7rbk9-mam5uqozn7x508">
     <title>Kantin Ibu Ida - Nasi Rames Terbaik</title>
     
     <!-- Fonts -->
@@ -80,7 +81,32 @@
     </script>
 </head>
 <body class="@yield('body_class')">
-    
+    @auth
+        @if(!auth()->user()->is_admin)
+        <button class="kitchen-backdrop" type="button" onclick="document.body.classList.remove('kitchen-is-open')" aria-label="Tutup panel pesanan"></button>
+        <aside class="kitchen-panel">
+            <div class="kitchen-profile">
+                <span><i class="fa-solid fa-user"></i></span>
+                <div>
+                    <strong>Dapur Anda</strong>
+                    <small>Layanan Premium</small>
+                </div>
+                <button class="kitchen-close" type="button" onclick="document.body.classList.remove('kitchen-is-open')" aria-label="Tutup panel pesanan">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <nav class="kitchen-menu" aria-label="Menu pesanan">
+                <a href="{{ route('cart') }}" @if(request()->routeIs('cart')) class="active" @endif><i class="fa-solid fa-receipt"></i> Pesanan Aktif</a>
+                <a href="{{ route('orders.my') }}" @if(request()->routeIs('orders.*')) class="active" @endif><i class="fa-solid fa-clock-rotate-left"></i> Riwayat Pesanan</a>
+                <a href="{{ route('menu') }}" @if(request()->routeIs('menu*')) class="active" @endif><i class="fa-regular fa-heart"></i> Menu Favorit</a>
+                <a href="{{ route('cart') }}"><i class="fa-regular fa-credit-card"></i> Metode Pembayaran</a>
+                <a href="{{ route('profile') }}" @if(request()->routeIs('profile*')) class="active" @endif><i class="fa-solid fa-gear"></i> Pengaturan</a>
+            </nav>
+            <a class="kitchen-checkout" href="{{ route('cart') }}">Checkout Sekarang</a>
+        </aside>
+        @endif
+    @endauth
+
     <nav class="navbar animate-fade-in-up">
         <div class="container">
             <a href="/" class="navbar-brand">
@@ -120,6 +146,13 @@
                     <a href="{{ route('login') }}" class="btn btn-primary">Masuk</a>
                 @endauth
             </div>
+            @auth
+                @if(!auth()->user()->is_admin)
+                    <button class="kitchen-toggle" type="button" onclick="document.body.classList.toggle('kitchen-is-open')" aria-label="Buka panel pesanan">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                @endif
+            @endauth
         </div>
     </nav>
 
@@ -180,5 +213,47 @@
         </div>
     </footer>
 
+    <!-- Theme Toggle Button (Fixed, bottom-left) -->
+    <button
+        id="theme-toggle-btn"
+        aria-label="Toggle dark/light mode"
+        title="Ganti Mode Terang/Gelap"
+        onclick="
+            const store = Alpine.store('preferences');
+            const newTheme = store.theme === 'dark' ? 'light' : 'dark';
+            store.setTheme(newTheme);
+        "
+    >
+        <i class="fa-solid fa-moon" x-data x-show="$store.preferences.theme === 'light'" style="display:none;"></i>
+        <i class="fa-solid fa-sun" x-data x-show="$store.preferences.theme === 'dark'" style="display:none;"></i>
+    </button>
+    <style>
+        #theme-toggle-btn {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            z-index: 9999;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            border: 2px solid var(--border-color, #333);
+            background: var(--bg-card, #1a1a2e);
+            color: var(--text-primary, #fff);
+            font-size: 1.3rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+            transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.3s ease;
+        }
+        #theme-toggle-btn:hover {
+            transform: scale(1.15);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+        }
+        #theme-toggle-btn:active {
+            transform: scale(0.95);
+        }
+    </style>
 </body>
 </html>

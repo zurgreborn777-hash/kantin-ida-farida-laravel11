@@ -57,9 +57,11 @@
         <div class="mb-2">
             <label class="label">Metode Pembayaran</label>
             <select x-model="paymentMethod" class="input">
-                <option value="SP">QRIS (ShopeePay/Other)</option>
-                <option value="M1">Virtual Account Mandiri</option>
-                <!-- Tambahkan yang lain jika perlu -->
+                @forelse($paymentMethods as $pm)
+                    <option value="{{ $pm['paymentMethod'] }}">{{ $pm['paymentName'] }}</option>
+                @empty
+                    <option value="">Tidak ada metode pembayaran tersedia</option>
+                @endforelse
             </select>
         </div>
 
@@ -76,7 +78,7 @@ function kasirApp() {
     return {
         cart: [],
         customerName: '',
-        paymentMethod: 'SP',
+        paymentMethod: '{{ count($paymentMethods) > 0 ? $paymentMethods[0]['paymentMethod'] : '' }}',
         isProcessing: false,
 
         get totalPrice() {

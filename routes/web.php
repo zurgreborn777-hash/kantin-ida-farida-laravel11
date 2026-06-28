@@ -10,20 +10,6 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/menu', [HomeController::class, 'menu'])->name('menu');
 Route::get('/menu/{menu}', [HomeController::class, 'menuShow'])->name('menu.show');
 
-Route::get('/hello', function() {
-    return "Hello! If you see this, the new code is deployed.";
-});
-
-// Temporary route to seed database
-Route::get('/seed-db', function() {
-    try {
-        \Illuminate\Support\Facades\Artisan::call('optimize:clear');
-        \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
-        return "Database seeded successfully!<br><br><b>Admin:</b> admin@ibuida.com / password<br><b>User:</b> user@test.com / password";
-    } catch (\Exception $e) {
-        return "Error seeding database: " . $e->getMessage();
-    }
-});
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');

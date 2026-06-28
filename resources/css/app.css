@@ -191,8 +191,12 @@ p { color: var(--text-muted); margin-bottom: 1rem; }
 
 .navbar .container {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
+}
+
+.navbar .nav-links {
+    margin-left: auto;
 }
 
 .navbar-brand {
@@ -2047,12 +2051,10 @@ tbody tr:hover {
     display: flex;
     height: 38px;
     justify-content: center;
-    position: fixed;
-    right: 40px;
-    top: 29px;
     transition: background 180ms ease, color 180ms ease, transform 180ms ease;
     width: 46px;
-    z-index: 1100;
+    flex-shrink: 0;
+    margin-left: 12px;
 }
 
 .kitchen-toggle:hover {
@@ -3636,6 +3638,110 @@ html.theme-light .auth-error {
     color: #ffb09d;
 }
 
+/* VA Selection Modal */
+.va-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.va-modal-panel {
+    background: #1a1a2e;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 460px;
+    max-height: 70vh;
+    overflow-y: auto;
+    padding: 24px;
+    animation: slideUp 0.3s ease;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes slideUp {
+    from { transform: translateY(40px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.va-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.va-modal-title {
+    font-size: 1.1rem;
+    color: #f3dfd4;
+    margin: 0;
+}
+
+.va-modal-subtitle {
+    opacity: 0.6;
+    color: #b8aaa0;
+    font-size: 0.85rem;
+}
+
+.va-modal-close {
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    cursor: pointer;
+    color: #f3dfd4;
+    padding: 4px 8px;
+}
+
+.va-modal-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.va-modal-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1.5px solid rgba(255, 255, 255, 0.08);
+    background: #111111;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+    text-align: left;
+    color: #f3dfd4;
+}
+
+.va-modal-item:hover {
+    border-color: var(--primary, #ff704f);
+}
+
+.va-modal-item.selected {
+    border-color: var(--primary, #ff704f);
+    background: rgba(255, 112, 79, 0.12);
+}
+
+.va-modal-item img {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+
+.va-modal-item span {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.va-modal-item .va-check {
+    margin-left: auto;
+    color: var(--primary, #ff704f);
+}
+
 .cart-checkout-btn,
 .cart-empty a {
     align-items: center;
@@ -4959,6 +5065,43 @@ html.theme-light .home-dashboard .site-footer {
     border-top-color: rgba(68, 39, 31, 0.16);
 }
 
+/* VA Modal – Light Theme */
+html.theme-light .va-modal-panel {
+    background: #fffaf5;
+    box-shadow: 0 20px 60px rgba(68, 39, 31, 0.25);
+}
+
+html.theme-light .va-modal-title {
+    color: #261612;
+}
+
+html.theme-light .va-modal-subtitle {
+    color: #76675f;
+}
+
+html.theme-light .va-modal-close {
+    color: #261612;
+}
+
+html.theme-light .va-modal-item {
+    background: #fff4ec;
+    border-color: rgba(68, 39, 31, 0.16);
+    color: #261612;
+}
+
+html.theme-light .va-modal-item:hover {
+    border-color: #ff704f;
+}
+
+html.theme-light .va-modal-item.selected {
+    border-color: #ff704f;
+    background: rgba(255, 112, 79, 0.1);
+}
+
+html.theme-light .va-modal-item .va-check {
+    color: #ff704f;
+}
+
 html.theme-light .home-dashboard p,
 html.theme-light .profile-tier,
 html.theme-light .profile-alert,
@@ -5189,11 +5332,6 @@ html.theme-light .home-dashboard .footer-bottom span:last-child::before {
         top: 0;
     }
 
-    .kitchen-toggle {
-        right: 16px;
-        top: 12px;
-    }
-
     .kitchen-panel {
         max-width: 86vw;
         width: 280px;
@@ -5205,10 +5343,6 @@ html.theme-light .home-dashboard .footer-bottom span:last-child::before {
     .artisan-actions {
         align-items: flex-start;
         flex-direction: column;
-    }
-
-    .home-dashboard .navbar .container {
-        padding-right: 4.5rem;
     }
 
     .home-dashboard .nav-links {

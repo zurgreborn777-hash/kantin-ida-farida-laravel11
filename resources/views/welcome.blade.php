@@ -3,34 +3,7 @@
 @section('body_class', 'home-dashboard')
 
 @section('content')
-<div class="dashboard-page" x-data="{ kitchenOpen: false }" :class="{ 'kitchen-is-open': kitchenOpen }">
-    <button class="kitchen-toggle" type="button" @click="kitchenOpen = true" aria-label="Buka panel pesanan">
-        <i class="fa-solid fa-bars"></i>
-    </button>
-    <button class="kitchen-backdrop" type="button" @click="kitchenOpen = false" aria-label="Tutup panel pesanan"></button>
-
-    <aside class="kitchen-panel" :aria-hidden="!kitchenOpen">
-        <div class="kitchen-profile">
-            <span><i class="fa-solid fa-user"></i></span>
-            <div>
-                <strong>Dapur Anda</strong>
-                <small>Layanan Premium</small>
-            </div>
-            <button class="kitchen-close" type="button" @click="kitchenOpen = false" aria-label="Tutup panel pesanan">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-
-        <nav class="kitchen-menu" aria-label="Menu pesanan">
-            <a class="active" href="{{ route('cart') }}"><i class="fa-solid fa-receipt"></i> Pesanan Aktif</a>
-            <a href="{{ route('orders.my') }}"><i class="fa-solid fa-clock-rotate-left"></i> Riwayat Pesanan</a>
-            <a href="{{ route('menu') }}"><i class="fa-regular fa-heart"></i> Menu Favorit</a>
-            <a href="{{ route('cart') }}"><i class="fa-regular fa-credit-card"></i> Metode Pembayaran</a>
-            <a href="{{ route('profile') }}"><i class="fa-solid fa-gear"></i> Pengaturan</a>
-        </nav>
-
-        <a class="kitchen-checkout" href="{{ route('cart') }}">Checkout Sekarang</a>
-    </aside>
+<div class="dashboard-page">
 
     <section class="artisan-hero">
         <div class="dashboard-container">
@@ -48,11 +21,13 @@
         <img src="https://images.unsplash.com/photo-1551218808-94e220e084d2?q=80&w=1200&auto=format&fit=crop" alt="Nasi rames segar dari dapur Ibu Ida">
         <div class="story-copy">
             <h2>Cerita Kami</h2>
-            <p>Berawal dari meja makan keluarga pada 1984, Kantin Ibu Ida tumbuh menjadi tempat merawat cita rasa Indonesia. Bagi Ibu Ida, waktu adalah bumbu paling penting.</p>
-            <p>Setiap bumbu diracik telaten, kuah dimasak perlahan, dan sayuran dipilih segar dari pemasok tepercaya. Kami tidak sekadar menyajikan makanan; kami mengantar rasa rumah yang dibuat lebih rapi untuk hari ini.</p>
+            <p>Sejak 2010, Kantin Ibu Ida hadir dengan satu prinsip sederhana: menyajikan masakan rumahan yang enak, bersih, dan dibuat dengan sepenuh hati.</p>
+            <p>Kami menggunakan bahan-bahan segar yang dipilih setiap hari serta rempah-rempah berkualitas agar setiap hidangan memiliki cita rasa yang konsisten. Setiap menu dimasak dengan teliti sehingga pelanggan dapat menikmati makanan yang hangat dan memuaskan.</p>
+            <p>Bagi kami, makanan yang baik tidak harus mewah. Yang terpenting adalah rasa, kebersihan, dan kualitas yang selalu terjaga.</p>
             <div class="story-stats">
-                <div><strong>40+</strong><span>Resep Warisan</span></div>
-                <div><strong>3</strong><span>Generasi</span></div>
+                <div><strong>2010</strong><span>Mulai Melayani Pelanggan</span></div>
+                <div><strong>100%</strong><span>Bahan Segar Setiap Hari</span></div>
+                <div><strong>Setiap Hari</strong><span>Masakan Dibuat Fresh</span></div>
             </div>
         </div>
     </section>
@@ -62,10 +37,6 @@
             <div>
                 <h2>Pilihan Dapur</h2>
                 <p>Menu favorit harian yang dipilih langsung dari dapur.</p>
-            </div>
-            <div class="section-arrows" aria-hidden="true">
-                <span><i class="fa-solid fa-chevron-left"></i></span>
-                <span><i class="fa-solid fa-chevron-right"></i></span>
             </div>
         </div>
 

@@ -33,7 +33,7 @@
             @foreach($menus as $menu)
             <article
                 class="menu-showcase-card"
-                x-show="(filter === 'Semua' || filter === '{{ $menu->category }}') && '{{ strtolower(addslashes($menu->name . ' ' . $menu->description)) }}'.includes(search.toLowerCase())"
+                x-show="(filter === 'Semua' || '{{ strtolower(addslashes($menu->category ?? '')) }}' === filter.toLowerCase()) && '{{ strtolower(addslashes($menu->name . ' ' . $menu->description)) }}'.includes(search.toLowerCase())"
                 x-transition.opacity
             >
                 <a href="{{ route('menu.show', $menu) }}" class="menu-card-image-link" aria-label="Lihat detail {{ $menu->name }}">

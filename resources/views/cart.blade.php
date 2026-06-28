@@ -30,10 +30,40 @@
         @endif
 
         @if($order && $order->items->count() > 0)
+        <script>
+            window.__duitkuPaymentMethods = {!! json_encode($paymentMethods) !!};
+        </script>
         <div class="cart-layout" x-data="{ 
             totalPrice: '{{ number_format($order->total_price, 0, ',', '.') }}',
             basePrice: {{ (int)$order->total_price }},
-            paymentMethod: 'SP',
+            availablePaymentMethods: [],
+            paymentMethod: '',
+            showVaModal: false,
+            get qrisMethods() {
+                return this.availablePaymentMethods.filter(pm => (pm.paymentName || '').toUpperCase().includes('QRIS'));
+            },
+            get vaMethods() {
+                return this.availablePaymentMethods.filter(pm => (pm.paymentName || '').toUpperCase().includes('VA'));
+            },
+            get otherMethods() {
+                return this.availablePaymentMethods.filter(pm => {
+                    const name = (pm.paymentName || '').toUpperCase();
+                    return !name.includes('QRIS') && !name.includes('VA');
+                });
+            },
+            get selectedPaymentLabel() {
+                const pm = this.availablePaymentMethods.find(m => m.paymentMethod === this.paymentMethod);
+                return pm ? pm.paymentName : '';
+            },
+            selectQris() {
+                if (this.qrisMethods.length > 0) {
+                    this.paymentMethod = this.qrisMethods[0].paymentMethod;
+                }
+            },
+            selectVaFromModal(code) {
+                this.paymentMethod = code;
+                this.showVaModal = false;
+            },
             location: '',
             
             // Map & Shipping simulation state
@@ -264,6 +294,10 @@
             },
             isProcessing: false,
             async checkout(paymentMethod) {
+                if (!this.paymentMethod) {
+                    alert('Pilih metode pembayaran terlebih dahulu.');
+                    return;
+                }
                 if (this.isCalculatingShipping) {
                     alert('Ongkos kirim masih dihitung. Mohon tunggu sebentar.');
                     return;
@@ -315,7 +349,7 @@
                     this.isProcessing = false;
                 }
             }
-        }" x-init="initMap()">
+        }" x-init="initMap(); availablePaymentMethods = window.__duitkuPaymentMethods || []; if (availablePaymentMethods.length > 0 && !paymentMethod) paymentMethod = availablePaymentMethods[0].paymentMethod;">
             <div class="cart-items-panel animate-fade-in-up">
                 <div class="cart-panel-head">
                     <div>
@@ -407,17 +441,42 @@
 
                 <div class="cart-field">
                     <label>Pilih Metode Pembayaran</label>
-                    <div class="cart-payment-grid">
-                        <label class="cart-payment-option" :class="{ 'active': paymentMethod === 'SP' }" @click="paymentMethod = 'SP'">
-                            <input type="radio" name="payment_method" value="SP" x-model="paymentMethod" style="display: none;">
+
+                    <template x-if="availablePaymentMethods.length === 0">
+                        <div style="padding: 12px; border-radius: 8px; background: rgba(255,100,100,0.15); color: #ff6b6b; font-size: 0.9rem;">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            Tidak ada metode pembayaran tersedia. Periksa konfigurasi Duitku.
+                        </div>
+                    </template>
+
+                    <div class="cart-payment-grid" x-show="availablePaymentMethods.length > 0" style="grid-template-columns: 1fr 1fr;">
+                        <!-- QRIS Button -->
+                        <label class="cart-payment-option"
+                               :class="{ 'active': qrisMethods.some(m => m.paymentMethod === paymentMethod) }"
+                               @click="selectQris()">
                             <i class="fa-solid fa-qrcode"></i>
                             <span>QRIS</span>
+                            <small x-show="qrisMethods.some(m => m.paymentMethod === paymentMethod) && selectedPaymentLabel"
+                                   x-text="selectedPaymentLabel"
+                                   style="font-size: 0.7rem; opacity: 0.7;"></small>
                         </label>
-                        <label class="cart-payment-option" :class="{ 'active': paymentMethod === 'M1' }" @click="paymentMethod = 'M1'">
-                            <input type="radio" name="payment_method" value="M1" x-model="paymentMethod" style="display: none;">
+
+                        <!-- VA Button -->
+                        <label class="cart-payment-option"
+                               :class="{ 'active': vaMethods.some(m => m.paymentMethod === paymentMethod) }"
+                               @click="showVaModal = true">
                             <i class="fa-solid fa-building-columns"></i>
                             <span>Virtual Account</span>
+                            <small x-show="vaMethods.some(m => m.paymentMethod === paymentMethod) && selectedPaymentLabel"
+                                   x-text="selectedPaymentLabel"
+                                   style="font-size: 0.7rem; opacity: 0.7;"></small>
                         </label>
+                    </div>
+
+                    <!-- Selected payment info -->
+                    <div x-show="paymentMethod" style="margin-top: 8px; font-size: 0.85rem; opacity: 0.8;">
+                        <i class="fa-solid fa-circle-check" style="color: var(--primary);"></i>
+                        <span x-text="'Metode: ' + selectedPaymentLabel"></span>
                     </div>
                 </div>
 
@@ -436,6 +495,38 @@
                     </form>
                 </div>
             </aside>
+
+            <!-- VA Selection Modal (inside x-data scope) -->
+            <div class="va-modal-overlay"
+                 @click.self="showVaModal = false"
+                 :style="showVaModal ? 'display: flex' : 'display: none'"
+                 style="display: none;">
+                <div class="va-modal-panel">
+                    <div class="va-modal-header">
+                        <div>
+                            <h3 class="va-modal-title">Pilih Virtual Account</h3>
+                            <small class="va-modal-subtitle">Pilih bank untuk pembayaran VA</small>
+                        </div>
+                        <button class="va-modal-close" @click="showVaModal = false">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    <div class="va-modal-list">
+                        <template x-for="pm in vaMethods" :key="pm.paymentMethod">
+                            <button class="va-modal-item"
+                                    :class="{ 'selected': paymentMethod === pm.paymentMethod }"
+                                    @click="selectVaFromModal(pm.paymentMethod)">
+                                <img x-show="pm.paymentImage"
+                                     :src="pm.paymentImage"
+                                     :alt="pm.paymentName">
+                                <i x-show="!pm.paymentImage" class="fa-solid fa-building-columns" style="font-size: 1.2rem;"></i>
+                                <span x-text="pm.paymentName"></span>
+                                <i x-show="paymentMethod === pm.paymentMethod" class="fa-solid fa-circle-check va-check"></i>
+                            </button>
+                        </template>
+                    </div>
+                </div>
+            </div>
         </div>
         @else
         <div class="cart-empty animate-fade-in-up">

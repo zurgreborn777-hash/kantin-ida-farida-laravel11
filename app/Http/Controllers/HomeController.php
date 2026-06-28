@@ -121,7 +121,10 @@ class HomeController extends Controller
                 $q->whereNull('location')->orWhere('location', 'not like', 'Kasir - %');
             })
             ->with('items.menu')->first();
-        return view('cart', compact('order'));
+
+        $paymentMethods = $this->fetchDuitkuPaymentMethods();
+
+        return view('cart', compact('order', 'paymentMethods'));
     }
 
     public function deliveryPreview(Request $request)
@@ -276,7 +279,7 @@ class HomeController extends Controller
     {
         $request->validate([
             'location' => 'required|string|max:1000',
-            'ongkir' => 'required|integer|min:1',
+            'ongkir' => 'required|integer|min:0',
             'distance' => 'nullable|numeric',
             'lat' => 'required|numeric',
             'lng' => 'required|numeric',
@@ -353,15 +356,6 @@ class HomeController extends Controller
 
         $signature = md5($merchantCode . $merchantOrderId . $paymentAmount . $apiKey);
 
-        $itemDetails = [];
-        foreach ($order->items as $item) {
-            $itemDetails[] = [
-                'name' => $item->menu ? $item->menu->name : 'Menu',
-                'price' => (int)$item->price,
-                'quantity' => (int)$item->quantity
-            ];
-        }
-
         $params = [
             'merchantCode' => $merchantCode,
             'paymentAmount' => (int)$paymentAmount,
@@ -427,10 +421,6 @@ class HomeController extends Controller
                 $orderId = explode('-', $merchantOrderId)[0];
                 $order = Order::find($orderId);
                 if ($order && $order->status == 'pending') {
-                    if ($order->distance_km !== null && $order->distance_km > config('canteen.max_delivery_km')) {
-                        return response('Lokasi di luar jangkauan 2 KM', 422);
-                    }
-
                     $order->status = 'dibuat';
                     $order->payment_status = 'paid';
                     $order->payment_method = $paymentCode ?: $order->payment_method;
@@ -439,8 +429,17 @@ class HomeController extends Controller
 
                     // Update stok menu
                     foreach ($order->items as $item) {
-                        if ($item->menu) {
+                        if ($item->menu && $item->menu->stock >= $item->quantity) {
                             $item->menu->decrement('stock', $item->quantity);
+                        } elseif ($item->menu) {
+                            // Stock insufficient but order already paid - set stock to 0
+                            $item->menu->update(['stock' => 0]);
+                            \Log::warning('Order callback: insufficient stock', [
+                                'order_id' => $order->id,
+                                'menu_id' => $item->menu_id,
+                                'requested' => $item->quantity,
+                                'available' => $item->menu->stock,
+                            ]);
                         }
                     }
                 }
@@ -563,5 +562,55 @@ class HomeController extends Controller
         }
 
         return null;
+    }
+
+    /**
+     * Fetch available payment methods from Duitku API
+     */
+    private function fetchDuitkuPaymentMethods(): array
+    {
+        $merchantCode = config('duitku.merchant_code');
+        $apiKey = config('duitku.api_key');
+
+        if (blank($merchantCode) || blank($apiKey)) {
+            return [];
+        }
+
+        $baseUrl = config('duitku.env') === 'production'
+            ? 'https://passport.duitku.com/webapi/api/merchant/paymentmethod/getpaymentmethod'
+            : 'https://sandbox.duitku.com/webapi/api/merchant/paymentmethod/getpaymentmethod';
+
+        $datetime = date('Y-m-d H:i:s');
+        $amount = 10000;
+        $stringToSign = $merchantCode . $amount . $datetime;
+        $signature = hash_hmac('sha256', $stringToSign, $apiKey);
+
+        try {
+            $response = Http::timeout(10)->post($baseUrl, [
+                'merchantcode' => $merchantCode,
+                'amount' => $amount,
+                'datetime' => $datetime,
+                'signature' => $signature,
+            ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                if (isset($data['paymentFee']) && is_array($data['paymentFee'])) {
+                    return $data['paymentFee'];
+                }
+                if (is_array($data) && isset($data[0]['paymentMethod'])) {
+                    return $data;
+                }
+            }
+
+            \Log::warning('Duitku getpaymentmethod failed', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+        } catch (\Throwable $e) {
+            \Log::error('Duitku getpaymentmethod error: ' . $e->getMessage());
+        }
+
+        return [];
     }
 }

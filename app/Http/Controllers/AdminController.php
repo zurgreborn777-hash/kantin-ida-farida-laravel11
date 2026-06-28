@@ -32,7 +32,7 @@ class AdminController extends Controller
             'stock' => 'required|integer|min:0',
         ]);
 
-        $data = $request->all();
+        $data = $request->only(['name', 'description', 'price', 'category', 'category_id', 'stock']);
         
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('public/menus');
@@ -58,7 +58,7 @@ class AdminController extends Controller
             'stock' => 'required|integer|min:0',
         ]);
 
-        $data = $request->all();
+        $data = $request->only(['name', 'description', 'price', 'category', 'category_id', 'stock']);
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('public/menus');
             $data['image_url'] = str_replace('public/', 'storage/', $path);
@@ -123,7 +123,8 @@ class AdminController extends Controller
     public function kasir()
     {
         $menus = Menu::where('stock', '>', 0)->get();
-        return view('admin.kasir', compact('menus'));
+        $paymentMethods = $this->fetchDuitkuPaymentMethods();
+        return view('admin.kasir', compact('menus', 'paymentMethods'));
     }
 
     public function kasirCheckout(Request $request)
@@ -132,7 +133,7 @@ class AdminController extends Controller
             'items' => 'required|array',
             'items.*.id' => 'required|exists:menus,id',
             'items.*.quantity' => 'required|integer|min:1',
-            'paymentMethod' => 'required|string',
+            'paymentMethod' => 'nullable|string',
             'customerName' => 'required|string',
         ]);
 
@@ -191,15 +192,6 @@ class AdminController extends Controller
 
         $signature = md5($merchantCode . $merchantOrderId . $paymentAmount . $apiKey);
 
-        $itemDetails = [];
-        foreach ($order->items as $orderItem) {
-            $itemDetails[] = [
-                'name' => $orderItem->menu ? $orderItem->menu->name : 'Menu',
-                'price' => (int)$orderItem->price,
-                'quantity' => (int)$orderItem->quantity
-            ];
-        }
-
         $params = [
             'merchantCode' => $merchantCode,
             'paymentAmount' => (int)$paymentAmount,
@@ -252,5 +244,47 @@ class AdminController extends Controller
         }
 
         return null;
+    }
+
+    private function fetchDuitkuPaymentMethods(): array
+    {
+        $merchantCode = config('duitku.merchant_code');
+        $apiKey = config('duitku.api_key');
+
+        if (blank($merchantCode) || blank($apiKey)) {
+            return [];
+        }
+
+        $baseUrl = config('duitku.env') === 'production'
+            ? 'https://passport.duitku.com/webapi/api/merchant/paymentmethod/getpaymentmethod'
+            : 'https://sandbox.duitku.com/webapi/api/merchant/paymentmethod/getpaymentmethod';
+
+        $datetime = date('Y-m-d H:i:s');
+        $amount = 10000;
+        $stringToSign = $merchantCode . $amount . $datetime;
+        $signature = hash_hmac('sha256', $stringToSign, $apiKey);
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::timeout(10)->post($baseUrl, [
+                'merchantcode' => $merchantCode,
+                'amount' => $amount,
+                'datetime' => $datetime,
+                'signature' => $signature,
+            ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                if (isset($data['paymentFee']) && is_array($data['paymentFee'])) {
+                    return $data['paymentFee'];
+                }
+                if (is_array($data) && isset($data[0]['paymentMethod'])) {
+                    return $data;
+                }
+            }
+        } catch (\Throwable $e) {
+            \Log::error('Admin fetchDuitkuPaymentMethods error: ' . $e->getMessage());
+        }
+
+        return [];
     }
 }

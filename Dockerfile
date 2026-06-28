@@ -28,7 +28,8 @@ WORKDIR /var/www/html
 # Copy application files
 COPY . .
 
-# Install PHP dependencies (--no-scripts to avoid DB connection during build)
+# Install PHP dependencies (allow running as root for source fallback)
+ENV COMPOSER_ALLOW_SUPERUSER=1
 RUN composer install --no-dev --optimize-autoloader --no-interaction --no-progress --no-scripts
 
 # Generate optimized autoload files (no scripts, no DB needed)
